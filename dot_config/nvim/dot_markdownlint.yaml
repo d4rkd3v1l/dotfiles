@@ -1,0 +1,10 @@
+# Multiple consecutive blank lines
+MD012:
+  maximum: 2
+
+# Line length
+MD013: false
+
+# Blank line inside block quote
+MD028: false
+

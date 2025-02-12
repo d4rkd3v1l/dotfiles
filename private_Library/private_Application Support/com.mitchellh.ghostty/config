@@ -1,0 +1,9 @@
+font-family = MesloLGS Nerd font
+font-size = 13
+theme = Dracula
+background = #282A35
+cursor-style = block
+cursor-style-blink = true
+shell-integration = zsh
+macos-titlebar-style = transparent
+confirm-close-surface = false
