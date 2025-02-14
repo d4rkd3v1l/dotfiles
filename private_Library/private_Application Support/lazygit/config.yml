@@ -1,6 +1,0 @@
-git:
-  paging:
-    colorArg: always
-    pager: delta --syntax-theme="Dracula" --paging=never --side-by-side --hyperlinks --hyperlinks-file-link-format="lazygit-edit://{path}:{line}" --plus-style 'syntax "#36483B"' --line-numbrers-plus-style '#50FA7B' --minus-style 'syntax "#403131"' --line-numbers-minus-style '#FF5555'
-os:
-  editPreset: "nvim"

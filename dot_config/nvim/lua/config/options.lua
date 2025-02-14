@@ -44,7 +44,7 @@ vim.opt.splitbelow = true
 -- Listchars
 vim.opt.list = true
 vim.opt.listchars = {
-  tab = "» ",
+  tab = "»»",
   trail = "⋅",
   nbsp = "·",
   extends = "›",

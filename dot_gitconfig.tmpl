@@ -1,0 +1,37 @@
+[user]
+  name = {{ .name | quote }}
+  email = {{ .email | quote }}
+
+[core]
+  pager = "delta"
+
+[interactive]
+  diffFilter = "delta --color-only"
+
+[delta]
+  syntax-theme = "Dracula"
+  file-style = "bold blue"
+  file-modified-label = ""
+  plus-style = "syntax #36483B"
+  plus-empty-line-marker-style = "normal #36483B"
+  plus-emph-style = "reverse bold green"
+  line-numbers-plus-style = "green"
+  minus-style = "syntax #403131"
+  minus-empty-line-marker-style = "normal #403131"
+  minus-emph-style = "reverse bold red"
+  line-numbers-minus-style = "red"
+  whitespace-error-style = "reverse bold purple"
+  line-numbers-left-style = "#44475a"
+  line-numbers-right-style = "#44475a"
+  line-numbers-zero-style = "#44475a"
+  paging = "never"
+  navigate = true
+  side-by-side = true
+  line-numbers = true
+  hyperlinks = true
+  hunk-header-style = "omit"
+
+[merge]
+  conflictstyle = "zdiff3"
+
+# vi: ft=gitignore

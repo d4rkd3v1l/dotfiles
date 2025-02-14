@@ -6,3 +6,12 @@
 .config/nvim/README.md
 .config/nvim/lazy-lock.json
 
+{{ if ne .chezmoi.os "darwin" }}
+Library/Application Support/**
+Brewfile
+{{ end }}
+
+{{ if ne .chezmoi.os "linux" }}
+.config/ghostty/**
+AptFile
+{{ end }}
