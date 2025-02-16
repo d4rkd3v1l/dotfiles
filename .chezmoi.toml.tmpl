@@ -1,0 +1,15 @@
+{{- $name := promptStringOnce . "name" "Name" -}}
+{{- $email := promptStringOnce . "email" "Email address" -}}
+
+[data]
+  name = {{ $name | quote }}
+  email = {{ $email | quote }}
+
+[diff]
+  command = "delta"
+  pager = "delta"
+
+[merge]
+  command = "nvim"
+  args = ["-d", "{{ "{{ .Destination }}" }}, {{ "{{ .Source }}" }}, {{ "{{ .Target }}" }}"]
+

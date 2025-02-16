@@ -40,7 +40,6 @@ else
 fi
 
 {{ else if eq .chezmoi.os "linux" -}}
-# TODO: Test if this is working at all^^
 # Add apt sources for ghostty
 echo 'deb http://download.opensuse.org/repositories/home:/clayrisser:/bookworm/Debian_12/ /' | sudo tee /etc/apt/sources.list.d/home:clayrisser:bookworm.list
 curl -fsSL https://download.opensuse.org/repositories/home:clayrisser:bookworm/Debian_12/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_clayrisser_bookworm.gpg > /dev/null
