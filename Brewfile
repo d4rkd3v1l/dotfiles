@@ -24,14 +24,4 @@ brew "git-delta"
 # Misc
 tap "homebrew/command-not-found"
 brew "git"
-brew "ansible"
-brew "pipx"
-brew "cowsay"
-brew "lolcat"
-
-# App Store
-# brew "mas"
-
 cask "ghostty"
-cask "vagrant"
-cask "brave-browser"
