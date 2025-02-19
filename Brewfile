@@ -1,9 +1,6 @@
 # chezmoi
 brew "chezmoi"
 
-# coreutils for e.g. "gnu ls"
-brew "coreutils"
-
 # tmux
 brew "tmux"
 brew "xclip"
@@ -24,4 +21,5 @@ brew "git-delta"
 # Misc
 tap "homebrew/command-not-found"
 brew "git"
+brew "eza"
 cask "ghostty"
