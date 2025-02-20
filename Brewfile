@@ -8,7 +8,6 @@ brew "xclip"
 # neovim
 brew "neovim"
 brew "node"
-# brew "rbenv"
 brew "fzf"
 brew "rg"
 brew "fd"
