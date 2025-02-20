@@ -25,7 +25,12 @@ fi
 
 {{ else if eq .chezmoi.os "linux" -}}
 # Change shell to zsh
-chsh -s /bin/zsh
+if [[ $(getent passwd $LOGNAME | cut -d: -f7) != "/bin/zsh" ]]; then
+  echo "Changing login shell to zsh..."
+  chsh -s /bin/zsh
+else
+  echo "Login shell is already zsh."
+fi
 
 # apt update
 sudo apt update
@@ -38,6 +43,13 @@ rm ghostty.deb
 
 # apt install
 xargs sudo apt install -y < AptFile
+
+# Fix bat
+if [ -f "/usr/bin/batcat" ] && [ ! -f "$HOME/.local/bin/bat" ]; then
+  echo "Fixing bat conflict..."
+  mkdir -p ~/.local/bin
+  ln -s /usr/bin/batcat ~/.local/bin/bat
+fi
 
 # lazygit
 LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
