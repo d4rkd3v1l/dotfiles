@@ -13,6 +13,8 @@ export EDITOR="nvim"
 
 # VI mode
 bindkey -v
+bindkey "^H" backward-delete-char
+bindkey "^?" backward-delete-char
 export KEYTIMEOUT=25
 
 # History
