@@ -11,6 +11,13 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 export EDITOR="nvim"
 
+# Homebrew
+{{ if eq .chezmoi.os "darwin" -}}
+eval "$(/opt/homebrew/bin/brew shellenv)"
+{{ else if eq .chezmoi.os "linux" -}}
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+{{ end -}}
+
 # VI mode
 bindkey -v
 bindkey "^H" backward-delete-char
@@ -108,3 +115,5 @@ zstyle ':fzf-tab:*' fzf-preview 'bat -n --color=always --line-range :500 $realpa
 
 # Shell integrations
 source <(fzf --zsh)
+
+# vi: ft=bash
