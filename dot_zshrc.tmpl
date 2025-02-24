@@ -11,11 +11,14 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 export EDITOR="nvim"
 
-# Homebrew
 {{ if eq .chezmoi.os "darwin" -}}
+# Homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
 {{ else if eq .chezmoi.os "linux" -}}
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+# Nix
+if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+  . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+fi
 {{ end -}}
 
 # VI mode

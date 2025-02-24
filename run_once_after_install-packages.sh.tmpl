@@ -26,7 +26,7 @@ else
   defaults write com.apple.dock size-immutable -bool yes && killall Dock
 fi
 
-{{- else if eq .chezmoi.os "linux" -}}
+{{- else if eq .chezmoi.os "linux" }}
 # --- [ Linux ] ---------------------------------
 
 # Change shell to zsh
@@ -37,13 +37,20 @@ else
   echo "Login shell is already zsh."
 fi
 
+# Apt (TBD if this should be here or using nix?)
+sudo apt install \
+  git \
+  tmux \
+  xclip \
+  command-not-found
+
 # Nix package manager (for bleeding edge stuff like neovim)
 echo "--- Installing Nix packages ---"
 if command -v nix &> /dev/null; then
   echo "Nix already installed."
 else
   echo "Installing Nix..."
-  sudo url -L https://nixos.org/nix/install | sh -s -- --no-daemon
+  sudo curl -L https://nixos.org/nix/install | sh -s -- --no-daemon
   . $HOME/.nix-profile/etc/profile.d/nix.sh
 fi
 echo "Installing Nix packages..."
@@ -55,15 +62,14 @@ nix-env -iA \
   nixpkgs.lazygit \
   nixpkgs.bat \
   nixpkgs.delta \
-  nixpkgs.eza \
-  nixpkgs.ghostty
+  nixpkgs.eza
 
-# # Ghostty
-# echo "--- Intalling ghostty ---"
-# GHOSTTY_URL=$(curl -s https://api.github.com/repos/mkasberg/ghostty-ubuntu/releases/latest | grep -oP "https://github.com/mkasberg/ghostty-ubuntu/releases/download/[^\s/]+/ghostty_[^\s/_]+_{{ .chezmoi.arch }}_bookworm.deb")
-# curl -Lo ghostty.deb "$GHOSTTY_URL"
-# sudo apt install -y -f ./ghostty.deb
-# rm ghostty.deb
+# Ghostty
+echo "--- Intalling ghostty ---"
+GHOSTTY_URL=$(curl -s https://api.github.com/repos/mkasberg/ghostty-ubuntu/releases/latest | grep -oP "https://github.com/mkasberg/ghostty-ubuntu/releases/download/[^\s/]+/ghostty_[^\s/_]+_{{ .chezmoi.arch }}_bookworm.deb")
+curl -Lo ghostty.deb "$GHOSTTY_URL"
+sudo apt install -y -f ./ghostty.deb
+rm ghostty.deb
 
 {{- end -}}
 
