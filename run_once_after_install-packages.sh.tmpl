@@ -1,8 +1,11 @@
 #!/bin/bash
+
+{{- if eq .chezmoi.os "darwin" -}}
+# --- [ macOS ] ---------------------------------
+
 echo "--- Running brew bundle ---"
 brew bundle
 
-{{ if eq .chezmoi.os "darwin" -}}
 echo "--- Configuring Finder & Dock ---"
 if [[ $(defaults read com.apple.Finder AppleShowAllFiles) == "YES" ]]; then
   echo "Finder AppleShowAllFiles already set."
@@ -23,7 +26,9 @@ else
   defaults write com.apple.dock size-immutable -bool yes && killall Dock
 fi
 
-{{ else if eq .chezmoi.os "linux" -}}
+{{- else if eq .chezmoi.os "linux" -}}
+# --- [ Linux ] ---------------------------------
+
 # Change shell to zsh
 if [[ $(getent passwd $LOGNAME | cut -d: -f7) != "/bin/zsh" ]]; then
   echo "Changing login shell to zsh..."
@@ -32,13 +37,37 @@ else
   echo "Login shell is already zsh."
 fi
 
-# Ghostty
-GHOSTTY_URL=$(curl -s https://api.github.com/repos/mkasberg/ghostty-ubuntu/releases/latest | grep -oP "https://github.com/mkasberg/ghostty-ubuntu/releases/download/[^\s/]+/ghostty_[^\s/_]+_{{ .chezmoi.arch }}_bookworm.deb")
-curl -Lo ghostty.deb "$GHOSTTY_URL"
-sudo apt install -y -f ./ghostty.deb
-rm ghostty.deb
-{{ end -}}
+# Nix package manager (for bleeding edge stuff like neovim)
+echo "--- Installing Nix packages ---"
+if command -v nix &> /dev/null; then
+  echo "Nix already installed."
+else
+  echo "Installing Nix..."
+  sudo url -L https://nixos.org/nix/install | sh -s -- --no-daemon
+  . $HOME/.nix-profile/etc/profile.d/nix.sh
+fi
+echo "Installing Nix packages..."
+nix-env -iA \
+  nixpkgs.neovim \
+  nixpkgs.fzf \
+  nixpkgs.ripgrep \
+  nixpkgs.fd \
+  nixpkgs.lazygit \
+  nixpkgs.bat \
+  nixpkgs.delta \
+  nixpkgs.eza \
+  nixpkgs.ghostty
 
+# # Ghostty
+# echo "--- Intalling ghostty ---"
+# GHOSTTY_URL=$(curl -s https://api.github.com/repos/mkasberg/ghostty-ubuntu/releases/latest | grep -oP "https://github.com/mkasberg/ghostty-ubuntu/releases/download/[^\s/]+/ghostty_[^\s/_]+_{{ .chezmoi.arch }}_bookworm.deb")
+# curl -Lo ghostty.deb "$GHOSTTY_URL"
+# sudo apt install -y -f ./ghostty.deb
+# rm ghostty.deb
+
+{{- end -}}
+
+# --- [ General ] ---------------------------------
 echo "--- Installing nerd-fonts ---"
 
 {{ if eq .chezmoi.os "darwin" -}}
@@ -64,7 +93,7 @@ popd > /dev/null
 echo "--- Installing tmux plugin manager and plugins ---"
 TPM_DIR="$HOME/.tmux/plugins/tpm"
 if [ -d "$TPM_DIR" ]; then
-  echo "Already installed."
+  echo "Tmux plugin manager already installed."
 else
   echo "Installing tmux plugin manager..."
   git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_DIR"
