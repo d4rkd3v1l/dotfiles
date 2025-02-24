@@ -1,6 +1,6 @@
 #!/bin/bash
 
-{{- if eq .chezmoi.os "darwin" -}}
+{{- if eq .chezmoi.os "darwin" }}
 # --- [ macOS ] ---------------------------------
 
 echo "--- Running brew bundle ---"
@@ -71,7 +71,7 @@ curl -Lo ghostty.deb "$GHOSTTY_URL"
 sudo apt install -y -f ./ghostty.deb
 rm ghostty.deb
 
-{{- end -}}
+{{- end }}
 
 # --- [ General ] ---------------------------------
 echo "--- Installing nerd-fonts ---"
