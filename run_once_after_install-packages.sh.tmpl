@@ -30,7 +30,7 @@ fi
 # Change shell to zsh
 if [[ $(getent passwd $LOGNAME | cut -d: -f7) != "/bin/zsh" ]]; then
   echo "Changing login shell to zsh..."
-  sudo chsh -s /bin/zsh kali
+  sudo chsh -s /bin/zsh $LOGNAME
 else
   echo "Login shell is already zsh."
 fi
@@ -48,7 +48,7 @@ if command -v nix &> /dev/null; then
   echo "Nix already installed."
 else
   echo "Installing Nix..."
-  curl -L https://nixos.org/nix/install | sh -s -- --daemon
+  curl -L https://nixos.org/nix/install | sh -s -- --no-daemon
 
   # curl -L https://nixos.org/nix/install | sh -s -- --no-daemon
   . $HOME/.nix-profile/etc/profile.d/nix.sh
