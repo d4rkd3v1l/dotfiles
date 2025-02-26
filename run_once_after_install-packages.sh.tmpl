@@ -48,9 +48,7 @@ if command -v nix &> /dev/null; then
   echo "Nix already installed."
 else
   echo "Installing Nix..."
-  curl -L https://nixos.org/nix/install | sh -s -- --no-daemon
-
-  # curl -L https://nixos.org/nix/install | sh -s -- --no-daemon
+  curl -L https://nixos.org/nix/install | sh -s -- --yes --no-modify-profile
   . $HOME/.nix-profile/etc/profile.d/nix.sh
 fi
 echo "Installing Nix packages..."
