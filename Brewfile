@@ -3,7 +3,6 @@ brew "chezmoi"
 
 # tmux
 brew "tmux"
-brew "xclip"
 
 # neovim
 brew "neovim"
