@@ -20,3 +20,13 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.spell = true
   end,
 })
+
+-- disable indentaton guides for file types
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = {
+    "markdown",
+  },
+  callback = function()
+    vim.b.snacks_indent = false
+  end,
+})
