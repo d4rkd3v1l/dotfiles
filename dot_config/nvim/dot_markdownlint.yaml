@@ -1,10 +1,32 @@
-# Multiple consecutive blank lines
-MD012:
-  maximum: 2
+# ul style
+MD004:
+  style: "dash"
 
 # Line length
 MD013: false
 
+# No duplicate heading
+MD024:
+  siblings_only: true
+
 # Blank line inside block quote
 MD028: false
 
+# hr style
+MD035:
+  style: "---"
+
+# Single trailing newline
+MD047: true
+
+# Code fence style
+MD048:
+  style: "backtick"
+
+# Emphasis style
+MD049:
+  style: "asterisk"
+
+# Strong style
+MD050:
+  style: "asterisk"

@@ -2,7 +2,7 @@ return {
   "bullets-vim/bullets.vim",
   ft = { "markdown" },
   config = function()
-    vim.keymap.set("n", "<leader>mc", "<Cmd>ToggleCheckbox<CR>", { desc = "Toggle checkbox" })
+    -- vim.keymap.set("n", "<leader>mc", "<Cmd>ToggleCheckbox<CR>", { desc = "Toggle checkbox" })
 
     -- "Disable" partially checked states
     vim.g.bullets_checkbox_markers = '    x'

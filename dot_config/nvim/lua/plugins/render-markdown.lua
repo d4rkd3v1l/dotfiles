@@ -2,14 +2,14 @@ return {
   "MeanderingProgrammer/render-markdown.nvim",
   opts = {
     win_options = {
-        conceallevel = {
-            default = 0, --vim.api.nvim_get_option_value('conceallevel', {}),
-            rendered = 3,
-        },
-        concealcursor = {
-            default = '', --vim.api.nvim_get_option_value('concealcursor', {}),
-            rendered = '',
-        },
+      conceallevel = {
+        default = 0, --vim.api.nvim_get_option_value('conceallevel', {}),
+        rendered = 3,
+      },
+      concealcursor = {
+        default = '', --vim.api.nvim_get_option_value('concealcursor', {}),
+        rendered = '',
+      },
     },
     bullet = {
       enabled = true,
