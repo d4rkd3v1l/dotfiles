@@ -112,10 +112,17 @@ _fzf_comprun() {
 }
 
 # fzf-tab preview customization
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza --tree --level=1 --color=always $realpath'
 zstyle ':fzf-tab:complete:export:*' fzf-preview "eval 'echo \$'$realpath"
 zstyle ':fzf-tab:complete:unset:*' fzf-preview "eval 'echo \$'$realpath"
-zstyle ':fzf-tab:*' fzf-preview 'bat -n --color=always --line-range :500 $realpath'
+zstyle ':fzf-tab:*' fzf-preview '
+  local file=$realpath
+  case "$(file --mime-type -b $file)" in
+    inode/directory) eza --tree --level=1 --color=always "$file" | head -200 ;;
+    text/*) bat -n --color=always --line-range :500 "$file" ;;
+    image/*) chafa "$file" ;;
+    *) echo "No preview available."
+  esac'
+
 
 # Shell integrations
 source <(fzf --zsh)
