@@ -21,12 +21,15 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- disable indentaton guides for file types
 vim.api.nvim_create_autocmd("FileType", {
   pattern = {
     "markdown",
   },
   callback = function()
+    vim.opt_local.wrap = false
+    vim.opt_local.linebreak = false
+
+    -- disable indentaton guides
     vim.b.snacks_indent = false
   end,
 })

@@ -47,7 +47,7 @@ return {
       checked = {
         icon = "   󰄲 ",
         highlight = "RenderMarkdownChecked",
-        scope_highlight = "@markup.strikethrough",
+        scope_highlight = "Conceal",
       },
       custom = {
         todo = {
