@@ -9,7 +9,14 @@ return {
       views = {
         cmdline_popup = {
           position = {
-            row = "10",
+            row = 8,
+            col = "50%",
+          },
+        },
+        cmdline_popupmenu = {
+          relative = "editor",
+          position = {
+            row = 11,
             col = "50%",
           },
         },
