@@ -61,7 +61,7 @@ return {
       },
     },
     pipe_table = {
-      preset = "round",
+      style = "normal",
     },
   }
 }
