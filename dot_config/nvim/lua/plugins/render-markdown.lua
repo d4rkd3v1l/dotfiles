@@ -17,9 +17,11 @@ return {
     code = {
       enabled = true,
       sign = false,
+      language_pad = 1,
       width = "block",
       right_pad = 1,
       border = "none",
+      inline_pad = 1,
     },
     heading = {
       enabled = true,
