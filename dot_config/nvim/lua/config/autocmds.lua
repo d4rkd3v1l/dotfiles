@@ -21,6 +21,7 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+-- Markdown settings
 vim.api.nvim_create_autocmd("FileType", {
   pattern = {
     "markdown",
