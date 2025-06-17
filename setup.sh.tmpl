@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Previously this script was "run_once_after_install-*", but I don't want this
+# to be excuted automatically. E.g. there are hosts, where I don't want everything
+# to be done. So I decided to have it executed manually, if required.
+#
+# Run following command to render the template and then execute the script:
+# `chezmoi execute-template < setup.sh.tmpl | bash`
+
 {{ if eq .chezmoi.os "darwin" -}}
 # --- [ macOS ] ---------------------------------
 echo "--- Running brew bundle ---"
