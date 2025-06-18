@@ -7,6 +7,8 @@
 # Run following command to render the template and then execute the script:
 # `chezmoi execute-template < setup.sh.tmpl | bash`
 
+set -euo pipefail
+
 {{ if eq .chezmoi.os "darwin" -}}
 # --- [ macOS ] ---------------------------------
 echo "--- Running brew bundle ---"
