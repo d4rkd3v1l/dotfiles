@@ -23,12 +23,13 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- Markdown settings
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = {
-    "markdown",
-  },
+  pattern = { "markdown" },
   callback = function()
     vim.opt_local.wrap = false
     vim.opt_local.linebreak = false
+
+    -- enable autoformat
+    vim.b.autoformat = true
 
     -- disable indentaton guides
     vim.b.snacks_indent = false
@@ -37,7 +38,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- custom highlight groups
 vim.api.nvim_create_autocmd("ColorScheme", {
-  pattern = "dracula",
+  pattern = {  "dracula" },
   callback = function()
     vim.api.nvim_set_hl(0, "@markup.list.checked.markdown", { link = "Conceal" })
   end
