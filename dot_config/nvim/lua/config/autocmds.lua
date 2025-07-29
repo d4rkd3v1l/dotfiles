@@ -35,11 +35,3 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.b.snacks_indent = false
   end,
 })
-
--- custom highlight groups
-vim.api.nvim_create_autocmd("ColorScheme", {
-  pattern = {  "dracula" },
-  callback = function()
-    vim.api.nvim_set_hl(0, "@markup.list.checked.markdown", { link = "Conceal" })
-  end
-})

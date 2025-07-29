@@ -48,7 +48,7 @@ return {
       },
       checked = {
         icon = "   󰄲 ",
-        highlight = "RenderMarkdownChecked",
+        highlight = "Conceal",
         scope_highlight = "Conceal",
       },
       custom = {
