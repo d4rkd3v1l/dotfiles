@@ -19,7 +19,7 @@ return {
       "java",
       "javascript",
       "jinja",
-      "jina_inline",
+      "jinja_inline",
       "jq",
       "json",
       "kotlin",
