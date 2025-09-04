@@ -36,6 +36,15 @@ fi
 
 {{- else if eq .chezmoi.os "linux" -}}
 # --- [ Linux ] ---------------------------------
+# Apt (TBD if this should be here or using nix?)
+sudo apt install -y \
+  curl \
+  wget \
+  git \
+  zsh \
+  tmux \
+  command-not-found
+
 echo "--- Ensuring zsh is login shell ---"
 if [[ $(getent passwd $LOGNAME | cut -d: -f7) != "/bin/zsh" ]]; then
   echo "Changing login shell to zsh..."
@@ -43,12 +52,6 @@ if [[ $(getent passwd $LOGNAME | cut -d: -f7) != "/bin/zsh" ]]; then
 else
   echo "Login shell is already zsh."
 fi
-
-# Apt (TBD if this should be here or using nix?)
-sudo apt install -y \
-  git \
-  tmux \
-  command-not-found
 
 # Nix package manager (for bleeding edge stuff like neovim)
 echo "--- Installing Nix packages ---"
