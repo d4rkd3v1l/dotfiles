@@ -17,7 +17,6 @@ brew "bat"
 brew "git-delta"
 
 # Misc
-tap "homebrew/command-not-found"
 brew "git"
 brew "eza"
 brew "tlrc"

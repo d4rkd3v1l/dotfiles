@@ -35,3 +35,15 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.b.snacks_indent = false
   end,
 })
+
+-- Open Trouble symbols
+vim.api.nvim_create_autocmd("BufEnter", {
+  callback = function()
+    local filetype = vim.bo.filetype
+    if filetype == "markdown" or filetype == "trouble" then
+      vim.cmd("Trouble symbols open focus=false")
+    else
+      vim.cmd("Trouble symbols close")
+    end
+  end,
+})
