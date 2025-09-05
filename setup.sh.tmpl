@@ -7,14 +7,78 @@
 # Run following command to render the template and then execute the script:
 # `chezmoi execute-template < setup.sh.tmpl | bash`
 
+# Colors (https://stackoverflow.com/a/28938235/2019384)
+ColorOff='\033[0m'  
+ColorGreen='\033[0;32m'
+DefaultColor=$ColorGreen
+
 set -euo pipefail
+
+function removeLastLine() {
+  echo -e -n "\033[1A\033[K"
+}
+
+function customFonts() {
+  echo "--- Installing nerd-fonts ---"
+
+  {{ if eq .chezmoi.os "darwin" -}}
+  pushd "$HOME/Library/Fonts" > /dev/null
+  {{ else if eq .chezmoi.os "linux" -}}
+  mkdir -p "$HOME/.fonts"
+  pushd "$HOME/.fonts" > /dev/null
+  {{ end -}}
+
+  FONTS=("MesloLGSNerdFont-Regular.ttf" "MesloLGSNerdFont-Bold.ttf" "MesloLGSNerdFont-Italic.ttf" "MesloLGSNerdFont-BoldItalic.ttf")
+
+  for FONT in "${FONTS[@]}"; do
+    if [ -f "$FONT" ]; then
+      echo "$FONT already installed."
+    else
+      echo "Installing $FONT..."
+      curl -L -O "https://github.com/ryanoasis/nerd-fonts/raw/refs/heads/master/patched-fonts/Meslo/S/Regular/$FONT"
+    fi
+  done
+
+  popd > /dev/null
+
+  echo
+  echo "✅ Custom fonts installed successfully."
+}
+
+function tmuxPlugins() {
+  echo "--- Installing tmux plugin manager and plugins ---"
+  TPM_DIR="$HOME/.tmux/plugins/tpm"
+  if [ -d "$TPM_DIR" ]; then
+    echo "Tmux plugin manager already installed."
+  else
+    echo "Installing tmux plugin manager..."
+    git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_DIR"
+    echo "Installing plugins..."
+    ~/.tmux/plugins/tpm/bin/install_plugins
+  fi
+
+  echo
+  echo "✅ Tmux plugins installed successfully."
+}
 
 {{ if eq .chezmoi.os "darwin" -}}
 # --- [ macOS ] ---------------------------------
-echo "--- Running brew bundle ---"
+
+echo "--- [ Starting configuration for macOS ] ---"
+
+{{ if promptBool "Install brew packages? " true }}
+echo "⏳ Installing brew packages..."
 brew bundle
 
-echo "--- Configuring Finder & Dock ---"
+echo
+echo "✅ brew packages installed successfully."
+{{ else }}
+echo "⚠️ brew packages not installed."
+{{ end }}
+
+
+{{ if promptBool "Configure Finder & Dock?" true }}
+echo "⏳ Configuring Finder & Dock..."
 if [[ $(defaults read com.apple.Finder AppleShowAllFiles) == "YES" ]]; then
   echo "Finder AppleShowAllFiles already set."
 else
@@ -30,93 +94,138 @@ fi
 if [[ $(defaults read-type com.apple.dock size-immutable) == "Type is boolean" ]] && [ $(defaults read com.apple.dock size-immutable) -eq 1 ]; then
   echo "Dock size already immutable."
 else
-  echp "Setting Dock size immutable..."
+  echo "Setting Dock size immutable..."
   defaults write com.apple.dock size-immutable -bool yes && killall Dock
 fi
 
+echo
+echo "✅ Finder and Dock configured successfully."
+{{ else }}
+echo "⚠️ Finder and Dock not configured."
+{{ end }}
+
+
 {{- else if eq .chezmoi.os "linux" -}}
 # --- [ Linux ] ---------------------------------
-echo "--- Ensuring zsh is login shell ---"
-if [[ $(getent passwd $LOGNAME | cut -d: -f7) != "/bin/zsh" ]]; then
-  echo "Changing login shell to zsh..."
-  sudo chsh -s /bin/zsh $LOGNAME
-else
-  echo "Login shell is already zsh."
-fi
 
-# Apt (TBD if this should be here or using nix?)
-sudo apt install -y \
-  git \
-  tmux \
-  command-not-found
+function apt() {
+  # Apt (TBD if this should be here or using nix?)
+  sudo apt install -y \
+    git \
+    tmux
+  }
 
-# Nix package manager (for bleeding edge stuff like neovim)
-echo "--- Installing Nix packages ---"
-if command -v nix &> /dev/null; then
-  echo "Nix already installed."
-else
-  echo "Installing Nix..."
-  curl -L https://nixos.org/nix/install | sh -s -- --yes --no-modify-profile
-  . $HOME/.nix-profile/etc/profile.d/nix.sh
-fi
-echo "Installing Nix packages..."
-nix-env -iA \
-  nixpkgs.neovim \
-  nixpkgs.fzf \
-  nixpkgs.ripgrep \
-  nixpkgs.fd \
-  nixpkgs.lazygit \
-  nixpkgs.bat \
-  nixpkgs.delta \
-  nixpkgs.eza \
-  nixpkgs.tlrc
+function zsh() {
+  echo "--- Ensuring zsh is login shell ---"
+  if [[ $(getent passwd $LOGNAME | cut -d: -f7) != "/bin/zsh" ]]; then
+    echo "Changing login shell to zsh..."
+    sudo chsh -s /bin/zsh $LOGNAME
+  else
+    echo "Login shell is already zsh."
+  fi
+}
 
-# Ghostty
-echo "--- Intalling Ghostty ---"
-if command -v ghostty &> /dev/null; then
-  echo "Ghostty already installed."
-else
-  echo "Installing Ghostty..."
-  GHOSTTY_URL=$(curl -s https://api.github.com/repos/mkasberg/ghostty-ubuntu/releases/latest | grep -oP "https://github.com/mkasberg/ghostty-ubuntu/releases/download/[^\s/]+/ghostty_[^\s/_]+_{{ .chezmoi.arch }}_bookworm.deb")
-  curl -Lo ghostty.deb "$GHOSTTY_URL"
-  sudo apt install -y -f ./ghostty.deb
-  rm ghostty.deb
-fi
+function nix() {
+  # Nix package manager (for bleeding edge stuff like neovim)
+  echo "--- Installing Nix packages ---"
+  if command -v nix &> /dev/null; then
+    echo "Nix already installed."
+  else
+    echo "Installing Nix..."
+    curl -L https://nixos.org/nix/install | sh -s -- --yes --no-modify-profile
+    . $HOME/.nix-profile/etc/profile.d/nix.sh
+  fi
+  echo "Installing Nix packages..."
+  nix-env -iA \
+    nixpkgs.neovim \
+    nixpkgs.fzf \
+    nixpkgs.ripgrep \
+    nixpkgs.fd \
+    nixpkgs.lazygit \
+    nixpkgs.bat \
+    nixpkgs.delta \
+    nixpkgs.eza \
+    nixpkgs.tlrc
+  }
+
+function ghostty() {
+  # Ghostty
+  echo "--- Intalling Ghostty ---"
+  if command -v ghostty &> /dev/null; then
+    echo "Ghostty already installed."
+  else
+    echo "Installing Ghostty..."
+    GHOSTTY_URL=$(curl -s https://api.github.com/repos/mkasberg/ghostty-ubuntu/releases/latest | grep -oP "https://github.com/mkasberg/ghostty-ubuntu/releases/download/[^\s/]+/ghostty_[^\s/_]+_{{ .chezmoi.arch }}_bookworm.deb")
+    curl -Lo ghostty.deb "$GHOSTTY_URL"
+    sudo apt install -y -f ./ghostty.deb
+    rm ghostty.deb
+  fi
+}
+
+echo "--- [ Starting configuration for Linux ] ---"
+
+echo
+echo -e "${DefaultColor}----- [ Zsh ] -----${ColorOff}"
+while true; do
+  read -p "Set Zsh as login shell? (Y/n) " yn
+  case $yn in
+    [Nn]*) removeLastLine; echo; echo "⚠️  Zsh not set as login shell."; break;;
+    *) removeLastLine; zsh; break;;
+  esac
+done
+
+echo
+echo -e "${DefaultColor}----- [ apt ] -----${ColorOff}"
+while true; do
+  read -p "Install apt packages? (Y/n) " yn
+  case $yn in
+    [Nn]*) removeLastLine; echo; echo "⚠️  apt packages not installed."; break;;
+    *) removeLastLine; apt; break;;
+  esac
+done
+
+echo
+echo -e "${DefaultColor}----- [ nix ] -----${ColorOff}"
+while true; do
+  read -p "Install nix packages? (Y/n) " yn
+  case $yn in
+    [Nn]*) removeLastLine; echo; echo "⚠️  nix packages not installed."; break;;
+    *) removeLastLine; nix; break;;
+  esac
+done
+
+echo
+echo -e "${DefaultColor}----- [ Install Ghostty ] -----${ColorOff}"
+while true; do
+  read -p "Install Ghostty? (Y/n) " yn
+  case $yn in
+    [Nn]*) removeLastLine; echo; echo "⚠️  Ghostty not installed."; break;;
+    *) removeLastLine; ghostty; break;;
+  esac
+done
 
 {{- end }}
 
 # --- [ General ] ---------------------------------
-echo "--- Installing nerd-fonts ---"
 
-{{ if eq .chezmoi.os "darwin" -}}
-pushd "$HOME/Library/Fonts" > /dev/null
-{{ else if eq .chezmoi.os "linux" -}}
-mkdir -p "$HOME/.fonts"
-pushd "$HOME/.fonts" > /dev/null
-{{ end -}}
-
-FONTS=("MesloLGSNerdFont-Regular.ttf" "MesloLGSNerdFont-Bold.ttf" "MesloLGSNerdFont-Italic.ttf" "MesloLGSNerdFont-BoldItalic.ttf")
-
-for FONT in "${FONTS[@]}"; do
-  if [ -f "$FONT" ]; then
-    echo "$FONT already installed."
-  else
-    echo "Installing $FONT..."
-    curl -L -O "https://github.com/ryanoasis/nerd-fonts/raw/refs/heads/master/patched-fonts/Meslo/S/Regular/$FONT"
-  fi
+echo
+echo -e "${DefaultColor}----- [ Custom Fonts ] -----${ColorOff}"
+while true; do
+  read -p "Install custom fonts? (Y/n) " yn
+  case $yn in
+    [Nn]*) removeLastLine; echo; echo "⚠️  Custom fonts not installed."; break;;
+    *) removeLastLine; customFonts; break;;
+  esac
 done
 
-popd > /dev/null
-
-echo "--- Installing tmux plugin manager and plugins ---"
-TPM_DIR="$HOME/.tmux/plugins/tpm"
-if [ -d "$TPM_DIR" ]; then
-  echo "Tmux plugin manager already installed."
-else
-  echo "Installing tmux plugin manager..."
-  git clone --depth 1 https://github.com/tmux-plugins/tpm "$TPM_DIR"
-  echo "Installing plugins..."
-  ~/.tmux/plugins/tpm/bin/install_plugins
-fi
+echo
+echo -e "${DefaultColor}----- [ Tmux Plugins ] -----${ColorOff}"
+while true; do
+  read -p "Install tmux plugin manager and plugins? (Y/n) " yn
+  case $yn in
+    [Nn]*) removeLastLine; echo; echo "⚠️  tmux plugins not installed."; break;;
+    *) removeLastLine; tmuxPlugins; break;;
+  esac
+done
 
 # vi: ft=bash
