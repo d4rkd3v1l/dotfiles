@@ -5,3 +5,13 @@
 -- ESC mappings
 vim.keymap.set("i", "jk", "<ESC>")
 vim.keymap.set("i", "<C-c>", "<ESC>")
+
+-- Make x and c go into the black hole (don’t overwrite clipboard)
+vim.keymap.set({ "n", "x" }, "x", '"_x')
+vim.keymap.set({ "n", "x" }, "c", '"_c')
+vim.keymap.set({ "n", "x" }, "C", '"_C')
+
+-- Buffers
+vim.keymap.set("n", "<leader><delete>", function()
+  Snacks.bufdelete()
+end, { desc = "Close Buffer" })
