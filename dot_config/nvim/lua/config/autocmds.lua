@@ -36,7 +36,7 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- Open Trouble symbols
+-- Open Trouble symbols for markdown
 vim.api.nvim_create_autocmd("BufEnter", {
   callback = function()
     local filetype = vim.bo.filetype
