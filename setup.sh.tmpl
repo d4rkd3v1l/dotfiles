@@ -109,7 +109,6 @@ echo "⚠️ Finder and Dock not configured."
 # --- [ Linux ] ---------------------------------
 
 function apt() {
-  # Apt (TBD if this should be here or using nix?)
   sudo apt install -y \
     curl \
     wget \
@@ -149,7 +148,7 @@ function nix() {
     nixpkgs.delta \
     nixpkgs.eza \
     nixpkgs.tlrc
-  }
+}
 
 function ghostty() {
   # Ghostty

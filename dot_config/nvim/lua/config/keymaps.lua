@@ -12,6 +12,6 @@ vim.keymap.set({ "n", "x" }, "c", '"_c')
 vim.keymap.set({ "n", "x" }, "C", '"_C')
 
 -- Buffers
-vim.keymap.set("n", "<leader><delete>", function()
+vim.keymap.set("n", "<leader><BS>", function()
   Snacks.bufdelete()
 end, { desc = "Close Buffer" })
