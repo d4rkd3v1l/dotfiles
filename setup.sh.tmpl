@@ -66,43 +66,53 @@ function tmuxPlugins() {
 
 echo "--- [ Starting configuration for macOS ] ---"
 
-{{ if promptBool "Install brew packages? " true }}
-echo "⏳ Installing brew packages..."
-brew bundle
-
 echo
-echo "✅ brew packages installed successfully."
-{{ else }}
-echo "⚠️ brew packages not installed."
-{{ end }}
+echo -e "${DefaultColor}----- [ Zsh ] -----${ColorOff}"
+while true; do
+  read -p "Set Zsh as login shell? (Y/n) " yn
+  case $yn in
+    [Nn]*) removeLastLine; echo; echo "⚠️  Zsh not set as login shell."; break;;
+    *) removeLastLine; echo "bla"; break;;
+  esac
+done
 
-
-{{ if promptBool "Configure Finder & Dock?" true }}
-echo "⏳ Configuring Finder & Dock..."
-if [[ $(defaults read com.apple.Finder AppleShowAllFiles) == "YES" ]]; then
-  echo "Finder AppleShowAllFiles already set."
-else
-  echo "Setting Finder AppleShowAllFiles..."
-  defaults write com.apple.Finder AppleShowAllFiles YES && killall Finder
-fi
-if [ $(defaults read com.apple.dock tilesize) -eq 48 ]; then
-  echo "Dock tilesize already set to 48."
-else
-  echo "Setting Dock tilesize to 48..."
-  defaults write com.apple.dock tilesize -int 48 && killall Dock
-fi
-if [[ $(defaults read-type com.apple.dock size-immutable) == "Type is boolean" ]] && [ $(defaults read com.apple.dock size-immutable) -eq 1 ]; then
-  echo "Dock size already immutable."
-else
-  echo "Setting Dock size immutable..."
-  defaults write com.apple.dock size-immutable -bool yes && killall Dock
-fi
-
-echo
-echo "✅ Finder and Dock configured successfully."
-{{ else }}
-echo "⚠️ Finder and Dock not configured."
-{{ end }}
+# {{ if promptBool "Install brew packages? " true }}
+# echo "⏳ Installing brew packages..."
+# brew bundle
+#
+# echo
+# echo "✅ brew packages installed successfully."
+# {{ else }}
+# echo "⚠️ brew packages not installed."
+# {{ end }}
+#
+#
+# {{ if promptBool "Configure Finder & Dock?" true }}
+# echo "⏳ Configuring Finder & Dock..."
+# if [[ $(defaults read com.apple.Finder AppleShowAllFiles) == "YES" ]]; then
+#   echo "Finder AppleShowAllFiles already set."
+# else
+#   echo "Setting Finder AppleShowAllFiles..."
+#   defaults write com.apple.Finder AppleShowAllFiles YES && killall Finder
+# fi
+# if [ $(defaults read com.apple.dock tilesize) -eq 48 ]; then
+#   echo "Dock tilesize already set to 48."
+# else
+#   echo "Setting Dock tilesize to 48..."
+#   defaults write com.apple.dock tilesize -int 48 && killall Dock
+# fi
+# if [[ $(defaults read-type com.apple.dock size-immutable) == "Type is boolean" ]] && [ $(defaults read com.apple.dock size-immutable) -eq 1 ]; then
+#   echo "Dock size already immutable."
+# else
+#   echo "Setting Dock size immutable..."
+#   defaults write com.apple.dock size-immutable -bool yes && killall Dock
+# fi
+#
+# echo
+# echo "✅ Finder and Dock configured successfully."
+# {{ else }}
+# echo "⚠️ Finder and Dock not configured."
+# {{ end }}
 
 
 {{- else if eq .chezmoi.os "linux" -}}
