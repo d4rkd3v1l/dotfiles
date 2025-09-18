@@ -100,7 +100,7 @@ function zsh() {
 function nix() {
   # Nix package manager (for bleeding edge stuff like neovim)
   echo "⏳ Installing Nix and Nix packages..."
-  if command -v nix &> /dev/null; then
+  if type -P nix >/dev/null 2>&1; then
     echo "Nix already installed."
   else
     echo "Installing Nix..."
@@ -125,7 +125,7 @@ function nix() {
 function ghostty() {
   # Ghostty
   echo "⏳ Intalling Ghostty..."
-  if command -v ghostty &> /dev/null; then
+  if type -P ghostty >/dev/null 2>&1; then
     echo "Ghostty already installed."
   else
     GHOSTTY_URL=$(curl -s https://api.github.com/repos/mkasberg/ghostty-ubuntu/releases/latest | grep -oP "https://github.com/mkasberg/ghostty-ubuntu/releases/download/[^\s/]+/ghostty_[^\s/_]+_{{ .chezmoi.arch }}_bookworm.deb")
