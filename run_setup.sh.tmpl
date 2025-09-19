@@ -12,7 +12,7 @@ ColorOff='\033[0m'
 ColorGreen='\033[0;32m'
 DefaultColor=$ColorGreen
 
-# set -euo pipefail
+set -euo pipefail
 
 function removeLastLine() {
   echo -e -n "\033[1A\033[K"
@@ -74,27 +74,17 @@ while true; do
   esac
 done
 
-{{- else if eq .chezmoi.os "linux" -}}
+{{- else if eq .chezmoi.osRelease.id "debian" -}}
 # --- [ Linux ] ---------------------------------
 
 function apt() {
+  echo "⏳ Installing APT packages..."
   sudo apt install -y \
     curl \
     wget \
     git \
     zsh \
     tmux
-}
-
-function zsh() {
-  echo "⏳ Ensuring zsh is login shell..."
-  if [[ $(getent passwd $LOGNAME | cut -d: -f7) != "/bin/zsh" ]]; then
-    echo "Changing login shell to zsh..."
-    sudo chsh -s /bin/zsh $LOGNAME
-  else
-    echo "Login shell is already zsh."
-  fi
-  echo "✅ Zsh as login shell ensured successfully."
 }
 
 function nix() {
@@ -122,13 +112,24 @@ function nix() {
   echo "✅ Nix packages installed successfully."
 }
 
+function zsh() {
+  echo "⏳ Ensuring zsh is login shell..."
+  if [[ $(getent passwd $LOGNAME | cut -d: -f7) != "/bin/zsh" ]]; then
+    echo "Changing login shell to zsh..."
+    sudo chsh -s /bin/zsh $LOGNAME
+  else
+    echo "Login shell is already zsh."
+  fi
+  echo "✅ Zsh as login shell ensured successfully."
+}
+
 function ghostty() {
   # Ghostty
   echo "⏳ Intalling Ghostty..."
   if type -P ghostty >/dev/null 2>&1; then
     echo "Ghostty already installed."
   else
-    GHOSTTY_URL=$(curl -s https://api.github.com/repos/mkasberg/ghostty-ubuntu/releases/latest | grep -oP "https://github.com/mkasberg/ghostty-ubuntu/releases/download/[^\s/]+/ghostty_[^\s/_]+_{{ .chezmoi.arch }}_bookworm.deb")
+    GHOSTTY_URL=$(curl -s https://api.github.com/repos/mkasberg/ghostty-ubuntu/releases/latest | grep -oP "https://github.com/mkasberg/ghostty-ubuntu/releases/download/[^\s/]+/ghostty_[^\s/_]+_{{ .chezmoi.arch }}_trixie.deb")
     curl -Lo ghostty.deb "$GHOSTTY_URL"
     sudo apt install -y -f ./ghostty.deb
     rm ghostty.deb
@@ -140,32 +141,32 @@ function ghostty() {
 echo -e "${DefaultColor}--- [ Starting configuration for Linux ] ---${ColorOff}"
 
 echo
+echo -e "${DefaultColor}----- [ APT ] -----${ColorOff}"
+while true; do
+  read -p "❓ Install APT packages? (Y/n) " yn
+  case $yn in
+    [Nn]*) removeLastLine; echo "⚠️ Skipped APT packages installation."; break;;
+    *) removeLastLine; apt; break;;
+  esac
+done
+
+echo
+echo -e "${DefaultColor}----- [ Nix ] -----${ColorOff}"
+while true; do
+  read -p "❓ Install Nix packages? (Y/n) " yn
+  case $yn in
+    [Nn]*) removeLastLine; echo "⚠️ Skipped Nix packages installation."; break;;
+    *) removeLastLine; nix; break;;
+  esac
+done
+
+echo
 echo -e "${DefaultColor}----- [ Zsh ] -----${ColorOff}"
 while true; do
   read -p "❓ Set Zsh as login shell? (Y/n) " yn
   case $yn in
     [Nn]*) removeLastLine; echo "⚠️ Skipped ensuring Zsh as login shell."; break;;
     *) removeLastLine; zsh; break;;
-  esac
-done
-
-echo
-echo -e "${DefaultColor}----- [ apt ] -----${ColorOff}"
-while true; do
-  read -p "❓ Install apt packages? (Y/n) " yn
-  case $yn in
-    [Nn]*) removeLastLine; echo "⚠️ Skipped apt packages installation."; break;;
-    *) removeLastLine; apt; break;;
-  esac
-done
-
-echo
-echo -e "${DefaultColor}----- [ nix ] -----${ColorOff}"
-while true; do
-  read -p "❓ Install Nix packages? (Y/n) " yn
-  case $yn in
-    [Nn]*) removeLastLine; echo "⚠️ Skipped Nix packages installation."; break;;
-    *) removeLastLine; nix; break;;
   esac
 done
 
