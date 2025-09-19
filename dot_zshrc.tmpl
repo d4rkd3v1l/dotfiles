@@ -16,7 +16,7 @@ export EDITOR="nvim"
 if [ -e "/opt/homebrew/bin/brew" ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
-{{ else if eq .chezmoi.os "linux" -}}
+{{- else if eq .chezmoi.osRelease.id "debian" -}}
 # Nix
 if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
   . "$HOME/.nix-profile/etc/profile.d/nix.sh"

@@ -12,7 +12,8 @@ function removeLastLine() {
 }
 
 {{ if eq .chezmoi.os "darwin" -}}
-# --- [ macOS ] ---------------------------------
+
+echo -e "${DefaultColor}--- [ Resolving requirements for macOS ] ---${ColorOff}"
 
 function installBrew() {
   echo "⏳ Installing brew packages..."
@@ -45,8 +46,6 @@ function finderAndDock() {
   echo "✅ Finder and Dock configured successfully."
 }
 
-echo -e "${DefaultColor}--- [ Starting configuration for macOS ] ---${ColorOff}"
-
 echo
 echo -e "${DefaultColor}----- [ brew ] -----${ColorOff}"
 while true; do
@@ -67,112 +66,119 @@ while true; do
   esac
 done
 
-{{- else if eq .chezmoi.osRelease.id "debian" -}}
-# --- [ Linux ] ---------------------------------
+{{- else if eq .chezmoi.os "linux" -}}
+  {{- if eq .chezmoi.osRelease.id "debian" -}}
 
-function apt() {
-  echo "⏳ Installing APT packages..."
-  sudo apt install -y \
-    curl \
-    wget \
-    git \
-    zsh \
-    tmux
-}
+  echo -e "${DefaultColor}--- [ Resolving requirements for Debian ] ---${ColorOff}"
 
-function nix() {
-  # Nix package manager (for bleeding edge stuff like neovim)
-  echo "⏳ Installing Nix and Nix packages..."
-  if type -P nix >/dev/null 2>&1; then
-    echo "Nix already installed."
-  else
-    echo "Installing Nix..."
-    curl -L https://nixos.org/nix/install | sh -s -- --yes --no-modify-profile
-    . $HOME/.nix-profile/etc/profile.d/nix.sh
-  fi
-  echo "Installing Nix packages..."
-  nix-env -iA \
-    nixpkgs.neovim \
-    nixpkgs.fzf \
-    nixpkgs.ripgrep \
-    nixpkgs.fd \
-    nixpkgs.lazygit \
-    nixpkgs.bat \
-    nixpkgs.delta \
-    nixpkgs.eza \
-    nixpkgs.tlrc
+  function apt() {
+    echo "⏳ Installing APT packages..."
+    sudo apt install -y \
+      curl \
+      wget \
+      git \
+      zsh \
+      tmux
+  }
 
-  echo "✅ Nix packages installed successfully."
-}
+  function nix() {
+    # Nix package manager (for bleeding edge stuff like neovim)
+    echo "⏳ Installing Nix and Nix packages..."
+    if type -P nix >/dev/null 2>&1; then
+      echo "Nix already installed."
+    else
+      echo "Installing Nix..."
+      curl -L https://nixos.org/nix/install | sh -s -- --yes --no-modify-profile
+      . $HOME/.nix-profile/etc/profile.d/nix.sh
+    fi
+    echo "Installing Nix packages..."
+    nix-env -iA \
+      nixpkgs.neovim \
+      nixpkgs.fzf \
+      nixpkgs.ripgrep \
+      nixpkgs.fd \
+      nixpkgs.lazygit \
+      nixpkgs.bat \
+      nixpkgs.delta \
+      nixpkgs.eza \
+      nixpkgs.tlrc
 
-function zsh() {
-  echo "⏳ Ensuring zsh is login shell..."
-  if [[ $(getent passwd $LOGNAME | cut -d: -f7) != "/bin/zsh" ]]; then
-    echo "Changing login shell to zsh..."
-    sudo chsh -s /bin/zsh $LOGNAME
-  else
-    echo "Login shell is already zsh."
-  fi
-  echo "✅ Zsh as login shell ensured successfully."
-}
+    echo "✅ Nix packages installed successfully."
+  }
 
-function ghostty() {
-  # Ghostty
-  echo "⏳ Intalling Ghostty..."
-  if type -P ghostty >/dev/null 2>&1; then
-    echo "Ghostty already installed."
-  else
-    GHOSTTY_URL=$(curl -s https://api.github.com/repos/mkasberg/ghostty-ubuntu/releases/latest | grep -oP "https://github.com/mkasberg/ghostty-ubuntu/releases/download/[^\s/]+/ghostty_[^\s/_]+_{{ .chezmoi.arch }}_trixie.deb")
-    curl -Lo ghostty.deb "$GHOSTTY_URL"
-    sudo apt install -y -f ./ghostty.deb
-    rm ghostty.deb
-  fi
+  function zsh() {
+    echo "⏳ Ensuring zsh is login shell..."
+    if [[ $(getent passwd $LOGNAME | cut -d: -f7) != "/bin/zsh" ]]; then
+      echo "Changing login shell to zsh..."
+      sudo chsh -s /bin/zsh $LOGNAME
+    else
+      echo "Login shell is already zsh."
+    fi
+    echo "✅ Zsh as login shell ensured successfully."
+  }
 
-  echo "✅ Ghostty installed successfully."
-}
+  function ghostty() {
+    # Ghostty
+    echo "⏳ Intalling Ghostty..."
+    if type -P ghostty >/dev/null 2>&1; then
+      echo "Ghostty already installed."
+    else
+      GHOSTTY_URL=$(curl -s https://api.github.com/repos/mkasberg/ghostty-ubuntu/releases/latest | grep -oP "https://github.com/mkasberg/ghostty-ubuntu/releases/download/[^\s/]+/ghostty_[^\s/_]+_{{ .chezmoi.arch }}_trixie.deb")
+      curl -Lo ghostty.deb "$GHOSTTY_URL"
+      sudo apt install -y -f ./ghostty.deb
+      rm ghostty.deb
+    fi
 
-echo -e "${DefaultColor}--- [ Starting configuration for Linux ] ---${ColorOff}"
+    echo "✅ Ghostty installed successfully."
+  }
 
+  echo
+  echo -e "${DefaultColor}----- [ APT ] -----${ColorOff}"
+  while true; do
+    read -p "❓ Install APT packages? (Y/n) " yn
+    case $yn in
+      [Nn]*) removeLastLine; echo "⚠️ Skipped APT packages installation."; break;;
+      *) removeLastLine; apt; break;;
+    esac
+  done
+
+  echo
+  echo -e "${DefaultColor}----- [ Nix ] -----${ColorOff}"
+  while true; do
+    read -p "❓ Install Nix packages? (Y/n) " yn
+    case $yn in
+      [Nn]*) removeLastLine; echo "⚠️ Skipped Nix packages installation."; break;;
+      *) removeLastLine; nix; break;;
+    esac
+  done
+
+  echo
+  echo -e "${DefaultColor}----- [ Zsh ] -----${ColorOff}"
+  while true; do
+    read -p "❓ Set Zsh as login shell? (Y/n) " yn
+    case $yn in
+      [Nn]*) removeLastLine; echo "⚠️ Skipped ensuring Zsh as login shell."; break;;
+      *) removeLastLine; zsh; break;;
+    esac
+  done
+
+  echo
+  echo -e "${DefaultColor}----- [ Install Ghostty ] -----${ColorOff}"
+  while true; do
+    read -p "❓ Install Ghostty? (Y/n) " yn
+    case $yn in
+      [Nn]*) removeLastLine; echo "⚠️ Skipped Ghostty installation."; break;;
+      *) removeLastLine; ghostty; break;;
+    esac
+  done
+
+  {{- end }}
+{{- else -}}
 echo
-echo -e "${DefaultColor}----- [ APT ] -----${ColorOff}"
-while true; do
-  read -p "❓ Install APT packages? (Y/n) " yn
-  case $yn in
-    [Nn]*) removeLastLine; echo "⚠️ Skipped APT packages installation."; break;;
-    *) removeLastLine; apt; break;;
-  esac
-done
-
+echo -e "${DefaultColor}--- [ Resolving requirements ] ---${ColorOff}"
 echo
-echo -e "${DefaultColor}----- [ Nix ] -----${ColorOff}"
-while true; do
-  read -p "❓ Install Nix packages? (Y/n) " yn
-  case $yn in
-    [Nn]*) removeLastLine; echo "⚠️ Skipped Nix packages installation."; break;;
-    *) removeLastLine; nix; break;;
-  esac
-done
-
-echo
-echo -e "${DefaultColor}----- [ Zsh ] -----${ColorOff}"
-while true; do
-  read -p "❓ Set Zsh as login shell? (Y/n) " yn
-  case $yn in
-    [Nn]*) removeLastLine; echo "⚠️ Skipped ensuring Zsh as login shell."; break;;
-    *) removeLastLine; zsh; break;;
-  esac
-done
-
-echo
-echo -e "${DefaultColor}----- [ Install Ghostty ] -----${ColorOff}"
-while true; do
-  read -p "❓ Install Ghostty? (Y/n) " yn
-  case $yn in
-    [Nn]*) removeLastLine; echo "⚠️ Skipped Ghostty installation."; break;;
-    *) removeLastLine; ghostty; break;;
-  esac
-done
-
+echo "‼️ Unsupported operating system."
+exit 1
 {{- end }}
 
 # --- [ General ] ---------------------------------
