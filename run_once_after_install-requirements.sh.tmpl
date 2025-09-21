@@ -67,7 +67,7 @@ while true; do
 done
 
 {{- else if eq .chezmoi.os "linux" -}}
-  {{- if eq .chezmoi.osRelease.idLike "debian" -}}
+  {{- if (or (eq .chezmoi.osRelease.id "debian") (eq .chezmoi.osRelease.idLike "debian")) -}}
 
   echo -e "${DefaultColor}--- [ Resolving requirements for Debian ] ---${ColorOff}"
 
