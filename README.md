@@ -24,8 +24,8 @@ Chezmoi is used as a dotfiles manager. Here's how to install it.
 brew install chezmoi
 
 # Debian
-wget https://github.com/twpayne/chezmoi/releases/download/v2.65.0/chezmoi_2.65.0_linux_amd64.deb
-sudo dpkg -i chezmoi_2.65.0_linux_amd64.deb
+wget https://github.com/twpayne/chezmoi/releases/download/v2.65.1/chezmoi_2.65.1_linux_amd64.deb
+sudo dpkg -i chezmoi_2.65.1_linux_amd64.deb
 ```
 
 ## Init
