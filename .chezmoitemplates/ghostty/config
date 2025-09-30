@@ -7,3 +7,9 @@ cursor-style-blink = true
 shell-integration = zsh
 macos-titlebar-style = transparent
 confirm-close-surface = false
+
+{{- if eq .chezmoi.os "linux" -}}
+keybind = cmd+c=text:\x03
+keybind = ctrl+c=copy_to_clipboard
+keybind = ctrl+v=paste_from_clipboard
+{{- endif -}}
