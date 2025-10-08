@@ -7,6 +7,11 @@ return {
         relative = "editor",
         col = -1,
       },
+      scratch = {
+        width = 0.75,
+        height = 0.75,
+        zindex = 20,
+      }
     },
     image = {
       enabled = true,
