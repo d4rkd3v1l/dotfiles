@@ -12,4 +12,4 @@ confirm-close-surface = false
 keybind = cmd+c=text:\x03
 keybind = ctrl+c=copy_to_clipboard
 keybind = ctrl+v=paste_from_clipboard
-{{- endif -}}
+{{- end -}}
