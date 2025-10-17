@@ -9,7 +9,9 @@ local volume_item = sbar.add("item", "widgets.volume", {
   popup = { align = "center" }
 })
 
-sbar.add("bracket", "widgets.volume.bracket", { volume_item.name }, {
+sbar.add("bracket", "widgets.volume.bracket", { 
+  volume_item.name 
+}, {
   background = { color = colors.bg1 }
 })
 
