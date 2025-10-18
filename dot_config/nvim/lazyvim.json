@@ -20,6 +20,7 @@
     "lazyvim.plugins.extras.lang.vue",
     "lazyvim.plugins.extras.lang.yaml",
     "lazyvim.plugins.extras.ui.dashboard-nvim",
+    "lazyvim.plugins.extras.util.chezmoi",
     "lazyvim.plugins.extras.util.mini-hipatterns",
     "lazyvim.plugins.extras.util.project"
   ],
