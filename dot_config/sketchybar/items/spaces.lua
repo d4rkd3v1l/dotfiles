@@ -20,19 +20,19 @@ end
 local function updateSpaces()
   for spaceIndex, workspace in ipairs(workspaces) do
 
-    sbar.exec("aerospace list-windows --workspace " .. spaceIndex .. " --format '%{app-name}' --json ", function(apps)
+    sbar.exec("aerospace list-windows --workspace " .. workspace .. " --format '%{app-name}' --json ", function(apps)
       local selected = current_workspace == workspace
       local no_app = true
 
       -- Update space indicator
-      sbar.set("space." .. spaceIndex .. ".app.0", {
+      sbar.set("space." .. workspace .. ".app.0", {
         label = {
           highlight = selected,
         },
       })
 
       -- Update space (bracket) border
-      sbar.set("space." .. spaceIndex, {
+      sbar.set("space." .. workspace, {
         background = {
           border_color = selected and colors.workspace_colors[spaceIndex] or colors.bg2
         }
@@ -47,7 +47,7 @@ local function updateSpaces()
             local lookup = appIcons[appName]
             local icon = ((lookup == nil) and appIcons["default"] or lookup)
 
-            sbar.set("space." .. spaceIndex .. ".app." .. appIndex, {
+            sbar.set("space." .. workspace .. ".app." .. appIndex, {
               drawing = true,
               icon = {
                 drawing = true,
@@ -64,7 +64,7 @@ local function updateSpaces()
               }
             })
           else
-            sbar.set("space." .. spaceIndex .. ".app." .. appIndex, {
+            sbar.set("space." .. workspace .. ".app." .. appIndex, {
               drawing = (appIndex == 0) and true or false
             })
           end
@@ -72,7 +72,7 @@ local function updateSpaces()
 
         -- Handle empty spaces
         if next(apps) == nil then
-            sbar.set("space." .. spaceIndex .. ".app.1", {
+            sbar.set("space." .. workspace .. ".app.1", {
               drawing = true,
               icon = {
                 drawing = false,
@@ -92,7 +92,7 @@ end
 for spaceIndex, workspace in ipairs(workspaces) do
   local apps = {}
   for appIndex = 0, maxAppsPerSpace, 1 do
-    local app = sbar.add("item", "space." .. spaceIndex .. ".app." .. appIndex, {
+    local app = sbar.add("item", "space." .. workspace .. ".app." .. appIndex, {
       drawing = (appIndex == 0) and true or false,
       icon = {
         drawing = false,
@@ -114,7 +114,7 @@ for spaceIndex, workspace in ipairs(workspaces) do
         },
         highlight_color = colors.workspace_colors[spaceIndex],
         highlight = selected,
-        string = spaceIndex,
+        string = workspace,
       },
       padding_left = 2,
       padding_right = 2,
@@ -134,15 +134,15 @@ for spaceIndex, workspace in ipairs(workspaces) do
     apps[appIndex] = app.name
   end
 
-  local space = sbar.add("bracket", "space." .. spaceIndex, apps, {
+  local space = sbar.add("bracket", "space." .. workspace, apps, {
     background = {
       color = colors.bg1
     }
   })
 
-  spaces[spaceIndex] = space
+  spaces[workspace] = space
 
-  sbar.add("item", "space." .. spaceIndex .. ".padding", {
+  sbar.add("item", "space." .. workspace .. ".padding", {
     script = "",
     width = 5,
   })
@@ -175,11 +175,12 @@ local spaces_indicator = sbar.add("item", "spaces", {
 
 -- Event handles
 space_window_observer:subscribe("aerospace_workspace_change", function(env)
+  print("--- aerospace: workspace change to: " .. env.FOCUSED_WORKSPACE)
   current_workspace = env.FOCUSED_WORKSPACE
-  updateSpaces()
 end)
 
 space_window_observer:subscribe("aerospace_focus_change", function(env)
+  print("--- aerospace: focus change")
   updateSpaces()
 end)
 
