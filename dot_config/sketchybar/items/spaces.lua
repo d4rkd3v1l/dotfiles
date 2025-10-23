@@ -17,6 +17,34 @@ local function split(str, sep)
   return result
 end
 
+local function updateStatusLabel(app, isSelected)
+  -- Need to strip LTR marker \u200E as e.g. WhatsApp uses this
+  sbar.exec("osascript ./helpers/statuslabel.applescript \"" .. app.appName:gsub("\u{200E}", "") .. "\"", function(statusLabel)
+    app.statusLabel = statusLabel
+    
+    local statusLabelAsNumber = tonumber(statusLabel)
+    local showStatusLabel = statusLabelAsNumber == nil or statusLabelAsNumber > 0
+
+    app.app:set({ 
+      icon = {
+        color = showStatusLabel and colors.bg2 or colors.white,
+        highlight_color = showStatusLabel and colors.bg2 or colors.accent_color,
+      },
+      label = { 
+        drawing = showStatusLabel and true or false,
+        padding_left = 0,
+        string = app.statusLabel,
+        color = colors.bg2,
+        color = showStatusLabel and colors.bg2 or colors.white,
+        highlight_color = showStatusLabel and colors.bg2 or colors.accent_color,
+      },
+      background = {
+        color = showStatusLabel and colors.accent_color or colors.transparent,
+      }
+    })
+  end)
+end
+
 local function updateSpaces()
   for spaceIndex, workspace in ipairs(workspaces) do
 
@@ -25,7 +53,7 @@ local function updateSpaces()
       local no_app = true
 
       -- Update space indicator
-      spaces[workspace].apps[0]:set({
+      spaces[workspace].apps[0].app:set({
         label = {
           highlight = selected,
         },
@@ -42,46 +70,31 @@ local function updateSpaces()
       sbar.animate("tanh", 10, function()
         for appIndex = 0, maxAppsPerSpace, 1 do
           local aerospaceApp = aerospaceApps[appIndex]
+          local app = spaces[workspace].apps[appIndex]
           if aerospaceApp ~= nil then
             local appName = aerospaceApp["app-name"]
             local lookup = appIcons[appName]
             local icon = ((lookup == nil) and appIcons["Default"] or lookup)
 
-            local app = spaces[workspace].apps[appIndex]
-            app:set({
+            app.appName = appName
+            app.app:set({
               drawing = true,
               icon = {
                 drawing = true,
                 string = icon,
-                -- color = (appName == "Signal") and colors.pink or colors.white,
                 highlight = selected,
               },
               label = {
-                -- drawing = false,
                 highlight = selected,
               },
-              background = {
-                -- color = (appName == "Microsoft Teams") and colors.pink or colors.transparent,
-              }
             })
-            sbar.exec("osascript ./helpers/statuslabel.applescript \"" .. appName .. "\"", function(statusLabel)
-              if tonumber(statusLabel) > 0 then
-                app:set({ label = { drawing = true, string = "(" .. statusLabel .. ")" }})
-              else 
-                app:set({ label = { drawing = false }})
-              end
-            end)
-            app:subscribe({ "forced", "routine", "system_woke" }, function(env)
-              sbar.exec("osascript ./helpers/statuslabel.applescript \"" .. appName .. "\"", function(statusLabel)
-                if tonumber(statusLabel) > 0 then
-                  app:set({ label = { drawing = true, string = "(" .. statusLabel .. ")" }})
-                else 
-                  app:set({ label = { drawing = false }})
-                end
-              end)
+            updateStatusLabel(app, selected)
+            app.app:subscribe({ "forced", "routine", "system_woke" }, function(env)
+              updateStatusLabel(app, selected)
             end)
           else
-            spaces[workspace].apps[appIndex]:set({
+            app.appName = nil
+            app.app:set({
               drawing = (appIndex == 0) and true or false
             })
           end
@@ -124,8 +137,8 @@ for spaceIndex, workspace in ipairs(workspaces) do
       },
       label = {
         drawing = (appIndex == 0) and true or false,
-        padding_left = 10,
-        padding_right = 6,
+        padding_left = 5,
+        padding_right = 5,
         color = colors.white,
         font = {
           family = settings.font.numbers,
@@ -139,7 +152,7 @@ for spaceIndex, workspace in ipairs(workspaces) do
       padding_right = 2,
       background = {
         height = 24,
-        corner_radius = 8,
+        corner_radius = 7,
         color = colors.transparent,
         border_color = colors.transparent
       },
@@ -150,13 +163,18 @@ for spaceIndex, workspace in ipairs(workspaces) do
       sbar.exec("aerospace workspace --fail-if-noop " .. SID)
     end)
 
-    apps[appIndex] = app
-    appNames[appIndex] = app.name -- TODO: use a kinda map function
+    apps[appIndex] = {
+      app = app,
+      appName = appName,
+      statusLabel = 0
+    }
+    appNames[appIndex] = app.name -- TODO: use a map function
   end
 
   local space = sbar.add("bracket", "space." .. workspace, appNames, {
     background = {
-      color = colors.bg1
+      color = colors.bg1,
+      border_width = 2
     }
   })
 
