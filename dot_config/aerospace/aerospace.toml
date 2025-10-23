@@ -5,12 +5,12 @@
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
 after-startup-command = [
   'exec-and-forget sketchybar',
-  'exec-and-forget borders active_color=0xFF50FA7B inactive_color=0x00000000 width=6.0'
+  'exec-and-forget borders active_color=0xFFFF79C6 inactive_color=0x00000000 width=6.0'
 ]
 
 # Notify Sketchybar about workspace change
 exec-on-workspace-change = ['/bin/bash', '-c',
-  '~/.config/aerospace/change-workspace.sh $AEROSPACE_FOCUSED_WORKSPACE'
+'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE="$AEROSPACE_FOCUSED_WORKSPACE"'
 ]
 
 # Notify Sketchybar about focuse change
@@ -44,7 +44,7 @@ default-root-container-orientation = 'auto'
 # See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
 # See https://nikitabobko.github.io/AeroSpace/commands#move-mouse
 # Fallback value (if you omit the key): on-focused-monitor-changed = []
-on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+on-focused-monitor-changed = []
 
 # You can effectively turn off macOS "Hide application" (cmd-h) feature by toggling this flag
 # Useful if you don't use this macOS feature, but accidentally hit cmd-h or cmd-alt-h key
@@ -56,12 +56,12 @@ if.app-name-regex-substring = 'Ghostty|iTerm|Terminal'
 run = 'move-node-to-workspace 1'
 
 [[on-window-detected]]
-if.app-name-regex-substring = 'Brave|Safari|Chrome|Firefox'
+if.app-name-regex-substring = 'Brave|Safari|Chrome'
 run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'Mail|Outlook|Thunderbird'
-if.window-title-regex-substring = 'New Message|Re:|Fwd:'
+if.window-title-regex-substring = 'New Message|Untitled|Re:|Fwd:|FW:'
 run = ['layout floating', 'move-node-to-workspace 3']
 
 [[on-window-detected]]
@@ -75,6 +75,18 @@ run = 'move-node-to-workspace 4'
 [[on-window-detected]]
 if.app-name-regex-substring = 'Spotify|Music'
 run = 'move-node-to-workspace 5'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Firefox'
+run = 'move-node-to-workspace 7'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Excel'
+run = 'move-node-to-workspace 8'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Burp Suite'
+run = 'move-node-to-workspace 10'
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'Finder'
@@ -114,7 +126,7 @@ run = 'layout floating'
     inner.vertical =   10
     outer.left =       10
     outer.bottom =     10
-    outer.top =        18
+    outer.top =        [{ monitor.'built-in' = 18 }, 50]
     outer.right =      10
 
 # 'main' binding mode declaration
@@ -171,20 +183,50 @@ run = 'layout floating'
     alt-equal = 'resize smart +50'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
-    alt-1 = 'workspace 1'
-    alt-2 = 'workspace 2'
-    alt-3 = 'workspace 3'
-    alt-4 = 'workspace 4'
-    alt-5 = 'workspace 5'
-    alt-6 = 'workspace 6'
+    alt-a = 'workspace 1'
+    alt-s = 'workspace 2'
+    alt-d = 'workspace 3'
+    alt-f = 'workspace 4'
+    alt-g = 'workspace 5'
+    alt-y = 'workspace 6'
+    alt-x = 'workspace 7'
+    alt-c = 'workspace 8'
+    alt-v = 'workspace 9'
+    alt-b = 'workspace 10'
+
+    ctrl-1 = 'workspace 1'
+    ctrl-2 = 'workspace 2'
+    ctrl-3 = 'workspace 3'
+    ctrl-4 = 'workspace 4'
+    ctrl-5 = 'workspace 5'
+    ctrl-6 = 'workspace 6'
+    ctrl-7 = 'workspace 7'
+    ctrl-8 = 'workspace 8'
+    ctrl-9 = 'workspace 9'
+    ctrl-0 = 'workspace 10'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
-    alt-shift-1 = 'move-node-to-workspace 1'
-    alt-shift-2 = 'move-node-to-workspace 2'
-    alt-shift-3 = 'move-node-to-workspace 3'
-    alt-shift-4 = 'move-node-to-workspace 4'
-    alt-shift-5 = 'move-node-to-workspace 5'
-    alt-shift-6 = 'move-node-to-workspace 6'
+    alt-shift-a = 'move-node-to-workspace 1'
+    alt-shift-s = 'move-node-to-workspace 2'
+    alt-shift-d = 'move-node-to-workspace 3'
+    alt-shift-f = 'move-node-to-workspace 4'
+    alt-shift-g = 'move-node-to-workspace 5'
+    alt-shift-y = 'move-node-to-workspace 6'
+    alt-shift-x = 'move-node-to-workspace 7'
+    alt-shift-c = 'move-node-to-workspace 8'
+    alt-shift-v = 'move-node-to-workspace 9'
+    alt-shift-b = 'move-node-to-workspace 10'
+
+    ctrl-shift-1 = 'move-node-to-workspace 1'
+    ctrl-shift-2 = 'move-node-to-workspace 2'
+    ctrl-shift-3 = 'move-node-to-workspace 3'
+    ctrl-shift-4 = 'move-node-to-workspace 4'
+    ctrl-shift-5 = 'move-node-to-workspace 5'
+    ctrl-shift-6 = 'move-node-to-workspace 6'
+    ctrl-shift-7 = 'move-node-to-workspace 7'
+    ctrl-shift-8 = 'move-node-to-workspace 8'
+    ctrl-shift-9 = 'move-node-to-workspace 9'
+    ctrl-shift-0 = 'move-node-to-workspace 10'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
     alt-tab = 'workspace-back-and-forth'
@@ -213,3 +255,15 @@ run = 'layout floating'
     down = 'volume down'
     up = 'volume up'
     shift-down = ['volume set 0', 'mode main']
+
+[workspace-to-monitor-force-assignment]
+    1 = 'built-in'
+    2 = 2
+    3 = 2
+    4 = 3
+    5 = 2
+    6 = 3
+    7 = 2
+    8 = 3
+    9 = 2
+    10 = 2

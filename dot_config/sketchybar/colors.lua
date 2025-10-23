@@ -23,7 +23,7 @@ return {
   bg1 = 0xff363944,
   bg2 = 0xff414550,
 
-  workspace_colors = { 0xffbd93f9, 0xffffb86c, 0xff8be9fd, 0xffff79c6, 0xff50fa7b, 0xfff1fa8c },
+  accent_color = 0xffff79c6,
 
   with_alpha = function(color, alpha)
     if alpha > 1.0 or alpha < 0.0 then return color end

@@ -20,34 +20,35 @@ end
 local function updateSpaces()
   for spaceIndex, workspace in ipairs(workspaces) do
 
-    sbar.exec("aerospace list-windows --workspace " .. workspace .. " --format '%{app-name}' --json ", function(apps)
+    sbar.exec("aerospace list-windows --workspace " .. workspace .. " --format '%{app-name}' --json ", function(aerospaceApps)
       local selected = current_workspace == workspace
       local no_app = true
 
       -- Update space indicator
-      sbar.set("space." .. workspace .. ".app.0", {
+      spaces[workspace].apps[0]:set({
         label = {
           highlight = selected,
         },
       })
 
       -- Update space (bracket) border
-      sbar.set("space." .. workspace, {
+      spaces[workspace].space:set({
         background = {
-          border_color = selected and colors.workspace_colors[spaceIndex] or colors.bg2
+          border_color = selected and colors.accent_color or colors.bg2
         }
       })
 
       -- Update apps (windows)
       sbar.animate("tanh", 10, function()
         for appIndex = 0, maxAppsPerSpace, 1 do
-          local app = apps[appIndex]
-          if app ~= nil then
-            local appName = app["app-name"]
+          local aerospaceApp = aerospaceApps[appIndex]
+          if aerospaceApp ~= nil then
+            local appName = aerospaceApp["app-name"]
             local lookup = appIcons[appName]
-            local icon = ((lookup == nil) and appIcons["default"] or lookup)
+            local icon = ((lookup == nil) and appIcons["Default"] or lookup)
 
-            sbar.set("space." .. workspace .. ".app." .. appIndex, {
+            local app = spaces[workspace].apps[appIndex]
+            app:set({
               drawing = true,
               icon = {
                 drawing = true,
@@ -56,22 +57,38 @@ local function updateSpaces()
                 highlight = selected,
               },
               label = {
-                drawing = false,
+                -- drawing = false,
                 highlight = selected,
               },
               background = {
-                -- color = (appName == "Signal") and colors.pink or colors.transparent,
+                -- color = (appName == "Microsoft Teams") and colors.pink or colors.transparent,
               }
             })
+            sbar.exec("osascript ./helpers/statuslabel.applescript \"" .. appName .. "\"", function(statusLabel)
+              if tonumber(statusLabel) > 0 then
+                app:set({ label = { drawing = true, string = "(" .. statusLabel .. ")" }})
+              else 
+                app:set({ label = { drawing = false }})
+              end
+            end)
+            app:subscribe({ "forced", "routine", "system_woke" }, function(env)
+              sbar.exec("osascript ./helpers/statuslabel.applescript \"" .. appName .. "\"", function(statusLabel)
+                if tonumber(statusLabel) > 0 then
+                  app:set({ label = { drawing = true, string = "(" .. statusLabel .. ")" }})
+                else 
+                  app:set({ label = { drawing = false }})
+                end
+              end)
+            end)
           else
-            sbar.set("space." .. workspace .. ".app." .. appIndex, {
+            spaces[workspace].apps[appIndex]:set({
               drawing = (appIndex == 0) and true or false
             })
           end
         end
 
         -- Handle empty spaces
-        if next(apps) == nil then
+        if next(aerospaceApps) == nil then
             sbar.set("space." .. workspace .. ".app.1", {
               drawing = true,
               icon = {
@@ -91,16 +108,18 @@ end
 
 for spaceIndex, workspace in ipairs(workspaces) do
   local apps = {}
+  local appNames = {}
   for appIndex = 0, maxAppsPerSpace, 1 do
     local app = sbar.add("item", "space." .. workspace .. ".app." .. appIndex, {
       drawing = (appIndex == 0) and true or false,
+      update_freq = 10,
       icon = {
         drawing = false,
         font = settings.icons,
         padding_left = 5,
         padding_right = 5,
         color = colors.white,
-        highlight_color = colors.workspace_colors[spaceIndex],
+        highlight_color = colors.accent_color,
         highlight = selected
       },
       label = {
@@ -112,7 +131,7 @@ for spaceIndex, workspace in ipairs(workspaces) do
           family = settings.font.numbers,
           size = 14.0,
         },
-        highlight_color = colors.workspace_colors[spaceIndex],
+        highlight_color = colors.accent_color,
         highlight = selected,
         string = workspace,
       },
@@ -131,16 +150,20 @@ for spaceIndex, workspace in ipairs(workspaces) do
       sbar.exec("aerospace workspace --fail-if-noop " .. SID)
     end)
 
-    apps[appIndex] = app.name
+    apps[appIndex] = app
+    appNames[appIndex] = app.name -- TODO: use a kinda map function
   end
 
-  local space = sbar.add("bracket", "space." .. workspace, apps, {
+  local space = sbar.add("bracket", "space." .. workspace, appNames, {
     background = {
       color = colors.bg1
     }
   })
 
-  spaces[workspace] = space
+  spaces[workspace] = {
+    space = space,
+    apps = apps
+  }
 
   sbar.add("item", "space." .. workspace .. ".padding", {
     script = "",
@@ -175,12 +198,10 @@ local spaces_indicator = sbar.add("item", "spaces", {
 
 -- Event handles
 space_window_observer:subscribe("aerospace_workspace_change", function(env)
-  print("--- aerospace: workspace change to: " .. env.FOCUSED_WORKSPACE)
   current_workspace = env.FOCUSED_WORKSPACE
 end)
 
 space_window_observer:subscribe("aerospace_focus_change", function(env)
-  print("--- aerospace: focus change")
   updateSpaces()
 end)
 
