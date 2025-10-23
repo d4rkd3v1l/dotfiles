@@ -5,6 +5,17 @@ local appIcons = require("helpers.app_icons")
 
 local spaces = {}
 local maxAppsPerSpace = 4
+local spaceNames = {}
+spaceNames["1"] = "a"
+spaceNames["2"] = "s"
+spaceNames["3"] = "d"
+spaceNames["4"] = "f"
+spaceNames["5"] = "g"
+spaceNames["6"] = "y"
+spaceNames["7"] = "x"
+spaceNames["8"] = "c"
+spaceNames["9"] = "v"
+spaceNames["10"] = "b"
 
 local workspaces = get_workspaces()
 local current_workspace = get_current_workspace()
@@ -20,26 +31,13 @@ end
 local function updateStatusLabel(app, isSelected)
   -- Need to strip LTR marker \u200E as e.g. WhatsApp uses this
   sbar.exec("osascript ./helpers/statuslabel.applescript \"" .. app.appName:gsub("\u{200E}", "") .. "\"", function(statusLabel)
-    app.statusLabel = statusLabel
-    
     local statusLabelAsNumber = tonumber(statusLabel)
     local showStatusLabel = statusLabelAsNumber == nil or statusLabelAsNumber > 0
 
-    app.app:set({ 
-      icon = {
-        color = showStatusLabel and colors.bg2 or colors.white,
-        highlight_color = showStatusLabel and colors.bg2 or colors.accent_color,
-      },
-      label = { 
-        drawing = showStatusLabel and true or false,
-        padding_left = 0,
-        string = app.statusLabel,
-        color = colors.bg2,
-        color = showStatusLabel and colors.bg2 or colors.white,
-        highlight_color = showStatusLabel and colors.bg2 or colors.accent_color,
-      },
-      background = {
-        color = showStatusLabel and colors.accent_color or colors.transparent,
+    app.statusLabel:set({
+      drawing = showStatusLabel,
+      label = {
+        string = statusLabel
       }
     })
   end)
@@ -146,7 +144,7 @@ for spaceIndex, workspace in ipairs(workspaces) do
         },
         highlight_color = colors.accent_color,
         highlight = selected,
-        string = workspace,
+        string = spaceNames[workspace],
       },
       padding_left = 2,
       padding_right = 2,
@@ -158,6 +156,30 @@ for spaceIndex, workspace in ipairs(workspaces) do
       },
     })
 
+    local appStatusLabel = sbar.add("item", "space." .. workspace .. ".app." .. appIndex .. ".statusLabel", {
+      drawing = false,
+      padding_left = -13,
+      padding_right = 2,
+      y_offset = 5,
+      icon = { drawing = false },
+      label = {
+        padding_left = 4,
+        padding_right = 4,
+        align = "center",
+        y_offset = 1,
+        font = {
+          family = settings.font.numbers,
+          size = 10.0,
+        },
+      },
+      background = {
+        height = 14,
+        corner_radius = 7,
+        color = colors.red,
+        border_width = 0,
+      }
+    })
+
     app:subscribe("mouse.clicked", function(env)
       local SID = split(env.NAME, ".")[2]
       sbar.exec("aerospace workspace --fail-if-noop " .. SID)
@@ -165,10 +187,11 @@ for spaceIndex, workspace in ipairs(workspaces) do
 
     apps[appIndex] = {
       app = app,
+      statusLabel = appStatusLabel,
       appName = appName,
-      statusLabel = 0
     }
-    appNames[appIndex] = app.name -- TODO: use a map function
+    table.insert(appNames, app.name)
+    table.insert(appNames, appStatusLabel.name)
   end
 
   local space = sbar.add("bracket", "space." .. workspace, appNames, {
