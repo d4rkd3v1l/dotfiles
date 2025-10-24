@@ -76,16 +76,26 @@ run = 'move-node-to-workspace 4'
 if.app-name-regex-substring = 'Spotify|Music'
 run = 'move-node-to-workspace 5'
 
+# 6 = 2nd Ghostty
+
 [[on-window-detected]]
 if.app-name-regex-substring = 'Firefox'
 run = 'move-node-to-workspace 7'
 
+# 8 = misc built-in
+# 9 = misc monitor 2
+# 10 = misc monitor 3
+
 [[on-window-detected]]
-if.app-name-regex-substring = 'Excel'
-run = 'move-node-to-workspace 8'
+if.app-name-regex-substring = 'Cisco Secure Client'
+run = ['layout floating', 'move-node-to-workspace 9']
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'Burp Suite'
+run = 'move-node-to-workspace 9'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Excel'
 run = 'move-node-to-workspace 10'
 
 [[on-window-detected]]
@@ -107,10 +117,6 @@ run = 'layout floating'
 [[on-window-detected]]
 if.app-name-regex-substring = '1Password'
 run = 'layout floating'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Cisco Secure Client'
-run = ['layout floating', 'move-node-to-workspace y', 'macos-native-minimize']
 
 # Possible values: (qwerty|dvorak|colemak)
 # See https://nikitabobko.github.io/AeroSpace/guide#key-mapping
@@ -194,22 +200,11 @@ run = ['layout floating', 'move-node-to-workspace y', 'macos-native-minimize']
     alt-d = 'workspace 3'
     alt-f = 'workspace 4'
     alt-g = 'workspace 5'
-    alt-y = 'workspace 6'
+    alt-z = 'workspace 6'
     alt-x = 'workspace 7'
     alt-c = 'workspace 8'
     alt-v = 'workspace 9'
     alt-b = 'workspace 10'
-
-    ctrl-1 = 'workspace 1'
-    ctrl-2 = 'workspace 2'
-    ctrl-3 = 'workspace 3'
-    ctrl-4 = 'workspace 4'
-    ctrl-5 = 'workspace 5'
-    ctrl-6 = 'workspace 6'
-    ctrl-7 = 'workspace 7'
-    ctrl-8 = 'workspace 8'
-    ctrl-9 = 'workspace 9'
-    ctrl-0 = 'workspace 10'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
     alt-shift-a = 'move-node-to-workspace 1'
@@ -217,22 +212,11 @@ run = ['layout floating', 'move-node-to-workspace y', 'macos-native-minimize']
     alt-shift-d = 'move-node-to-workspace 3'
     alt-shift-f = 'move-node-to-workspace 4'
     alt-shift-g = 'move-node-to-workspace 5'
-    alt-shift-y = 'move-node-to-workspace 6'
+    alt-shift-z = 'move-node-to-workspace 6'
     alt-shift-x = 'move-node-to-workspace 7'
     alt-shift-c = 'move-node-to-workspace 8'
     alt-shift-v = 'move-node-to-workspace 9'
     alt-shift-b = 'move-node-to-workspace 10'
-
-    ctrl-shift-1 = 'move-node-to-workspace 1'
-    ctrl-shift-2 = 'move-node-to-workspace 2'
-    ctrl-shift-3 = 'move-node-to-workspace 3'
-    ctrl-shift-4 = 'move-node-to-workspace 4'
-    ctrl-shift-5 = 'move-node-to-workspace 5'
-    ctrl-shift-6 = 'move-node-to-workspace 6'
-    ctrl-shift-7 = 'move-node-to-workspace 7'
-    ctrl-shift-8 = 'move-node-to-workspace 8'
-    ctrl-shift-9 = 'move-node-to-workspace 9'
-    ctrl-shift-0 = 'move-node-to-workspace 10'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
     alt-tab = 'workspace-back-and-forth'
@@ -263,13 +247,13 @@ run = ['layout floating', 'move-node-to-workspace y', 'macos-native-minimize']
     shift-down = ['volume set 0', 'mode main']
 
 [workspace-to-monitor-force-assignment]
-    1 = 'built-in'
-    2 = 2
-    3 = 2
-    4 = 3
-    5 = 2
-    6 = 3
-    7 = 2
-    8 = 3
-    9 = 2
-    10 = 2
+    1 = 'built-in' # a
+    2 = 2 # s
+    3 = 2 # d
+    4 = 3 # f
+    5 = 2 # g
+    6 = 2 # y 
+    7 = 2 # x
+    8 = 'built-in' # c
+    9 = 2 # v
+    10 = 3 # b
