@@ -108,6 +108,10 @@ run = 'layout floating'
 if.app-name-regex-substring = '1Password'
 run = 'layout floating'
 
+[[on-window-detected]]
+if.app-name-regex-substring = 'Cisco Secure Client'
+run = ['layout floating', 'move-node-to-workspace y', 'macos-native-minimize']
+
 # Possible values: (qwerty|dvorak|colemak)
 # See https://nikitabobko.github.io/AeroSpace/guide#key-mapping
 [key-mapping]
@@ -163,8 +167,10 @@ run = 'layout floating'
     # '''
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#layout
-    alt-slash = 'layout tiles horizontal vertical'
-    alt-comma = 'layout accordion horizontal vertical'
+    alt-m = 'fullscreen'
+    alt-comma = 'layout accordion vertical'
+    alt-period = 'layout tiles horizontal vertical'
+    alt-slash = 'layout floating tiling'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#focus
     alt-h = 'focus left'

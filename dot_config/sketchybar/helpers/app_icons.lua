@@ -32,7 +32,7 @@ return {
 	["Blender"] = ":blender:",
 	["BluOS Controller"] = ":bluos_controller:",
   ["Burp Suite Community Edition"] = ":burp_suite:",
-  ["Burp Suite Professional Edition"] = ":burp_suite:",
+  ["Burp Suite Professional"] = ":burp_suite:",
 	["Calibre"] = ":book:",
 	["Brave Browser"] = ":brave_browser:",
 	["BusyCal"] = ":busycal:",
