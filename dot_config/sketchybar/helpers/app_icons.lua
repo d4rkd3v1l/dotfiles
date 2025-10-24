@@ -1,5 +1,6 @@
 return {
 	["Live"] = ":ableton:",
+	["Acrobat"] = ":acrobat:",
 	["Adobe Bridge"] = ":adobe_bridge:",
 	["Affinity Designer"] = ":affinity_designer:",
 	["Affinity Designer 2"] = ":affinity_designer_2:",

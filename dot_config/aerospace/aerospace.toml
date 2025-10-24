@@ -95,6 +95,11 @@ if.app-name-regex-substring = 'Burp Suite'
 run = 'move-node-to-workspace 9'
 
 [[on-window-detected]]
+if.app-name-regex-substring = 'Burp Suite'
+if.window-title-regex-substring = 'Automatic project backup'
+run = ['layout floating', 'move-node-to-workspace 9']
+
+[[on-window-detected]]
 if.app-name-regex-substring = 'Excel'
 run = 'move-node-to-workspace 10'
 
@@ -182,7 +187,7 @@ run = 'layout floating'
     alt-h = 'focus left'
     alt-j = 'focus down'
     alt-k = 'focus up'
-    alt-l = 'focus right'
+    # alt-l = 'focus right' # Conflicts with "at"
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move
     alt-shift-h = 'move left'
