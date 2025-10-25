@@ -18,6 +18,7 @@ spaceNames["9"] = "v"
 spaceNames["10"] = "b"
 
 local workspaces = get_workspaces()
+local prev_workspace = get_current_workspace()
 local current_workspace = get_current_workspace()
 local function split(str, sep)
   local result = {}
@@ -29,7 +30,7 @@ local function split(str, sep)
 end
 
 local function updateStatusLabel(app, isSelected)
-  -- Need to strip LTR marker \u200E as e.g. WhatsApp uses this
+  -- Need to strip LTR marker \u200E as e.g. WhatsApp uses it
   sbar.exec("osascript ./helpers/statuslabel.applescript \"" .. app.appName:gsub("\u{200E}", "") .. "\"", function(statusLabel)
     local statusLabelAsNumber = tonumber(statusLabel)
     local showStatusLabel = statusLabelAsNumber == nil or statusLabelAsNumber > 0
@@ -48,7 +49,6 @@ local function updateSpaces()
 
     sbar.exec("aerospace list-windows --workspace " .. workspace .. " --format '%{app-name}' --json ", function(aerospaceApps)
       local selected = current_workspace == workspace
-      local no_app = true
 
       -- Update space indicator
       spaces[workspace].apps[0].app:set({
@@ -64,7 +64,7 @@ local function updateSpaces()
         }
       })
 
-      -- Update apps (windows)
+      -- Update apps (actually windows)
       sbar.animate("tanh", 10, function()
         for appIndex = 0, maxAppsPerSpace, 1 do
           local aerospaceApp = aerospaceApps[appIndex]
@@ -83,7 +83,7 @@ local function updateSpaces()
                 highlight = selected,
               },
               label = {
-                highlight = selected,
+                drawing = false,
               },
             })
             updateStatusLabel(app, selected)
@@ -95,22 +95,28 @@ local function updateSpaces()
             app.app:set({
               drawing = (appIndex == 0) and true or false
             })
+            app.statusLabel:set({
+              drawing = false
+            })
           end
         end
 
         -- Handle empty spaces
         if next(aerospaceApps) == nil then
-            sbar.set("space." .. workspace .. ".app.1", {
+          app = spaces[workspace].apps[1]
+          app.app:set({
               drawing = true,
               icon = {
                 drawing = false,
               },
               label = {
                 drawing = true,
-                string = "—",
-                highlight = selected,
-              },
-            })
+              string = "—",
+              highlight = selected,
+            },
+          })
+          -- "unsubscribe"
+          app.app:subscribe({ "forced", "routine", "system_woke" }, function() end)
         end
       end)
     end)
@@ -239,6 +245,8 @@ local spaces_indicator = sbar.add("item", "spaces", {
 
 -- Event handles
 space_window_observer:subscribe("aerospace_workspace_change", function(env)
+  print(env.PREV_WORKSPACE .. " -> " .. env.FOCUSED_WORKSPACE)
+  prev_workspace = env.PREV_WORKSPACE
   current_workspace = env.FOCUSED_WORKSPACE
 end)
 

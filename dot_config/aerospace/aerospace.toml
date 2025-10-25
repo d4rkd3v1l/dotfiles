@@ -10,13 +10,13 @@ after-startup-command = [
 
 # Notify Sketchybar about workspace change
 exec-on-workspace-change = ['/bin/bash', '-c',
-'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE="$AEROSPACE_FOCUSED_WORKSPACE"'
+'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE="$AEROSPACE_FOCUSED_WORKSPACE" PREV_WORKSPACE="$AEROSPACE_PREV_WORKSPACE"'
 ]
 
-# Notify Sketchybar about focuse change
+# Notify Sketchybar about focuse change (delay is needed to ensure it actually triggers after the change)
 # See https://nikitabobko.github.io/AeroSpace/guide#on-focus-changed-callbacks
 on-focus-changed = [
-  'exec-and-forget sketchybar --trigger aerospace_focus_change',
+  'exec-and-forget sleep 0.05 && sketchybar --trigger aerospace_focus_change'
 ]
 
 # Start AeroSpace at login
@@ -184,10 +184,10 @@ run = 'layout floating'
     alt-slash = 'layout floating tiling'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#focus
-    alt-h = 'focus left'
-    alt-j = 'focus down'
-    alt-k = 'focus up'
-    # alt-l = 'focus right' # Conflicts with "at"
+    alt-h = 'focus --boundaries-action wrap-around-the-workspace left'
+    alt-j = 'focus --boundaries-action wrap-around-the-workspace down'
+    alt-k = 'focus --boundaries-action wrap-around-the-workspace up'
+    # alt-l = 'focus --boundaries-action wrap-around-the-workspace right' # Conflicts with "at"
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move
     alt-shift-h = 'move left'
