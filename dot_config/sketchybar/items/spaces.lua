@@ -6,16 +6,9 @@ local appIcons = require("helpers.app_icons")
 local spaces = {}
 local maxAppsPerSpace = 4
 local spaceNames = {}
-spaceNames["1"] = "a"
-spaceNames["2"] = "s"
-spaceNames["3"] = "d"
-spaceNames["4"] = "f"
-spaceNames["5"] = "g"
-spaceNames["6"] = "y"
-spaceNames["7"] = "x"
-spaceNames["8"] = "c"
-spaceNames["9"] = "v"
-spaceNames["10"] = "b"
+spaceNames["1"] = "Tmux"
+spaceNames["2"] = "Main"
+spaceNames["3"] = "Misc"
 
 local workspaces = get_workspaces()
 local prev_workspace = get_current_workspace()
@@ -137,7 +130,7 @@ for spaceIndex, workspace in ipairs(workspaces) do
         padding_right = 5,
         color = colors.white,
         highlight_color = colors.accent_color,
-        highlight = selected
+        -- highlight = selected
       },
       label = {
         drawing = (appIndex == 0) and true or false,
@@ -145,11 +138,11 @@ for spaceIndex, workspace in ipairs(workspaces) do
         padding_right = 5,
         color = colors.white,
         font = {
-          family = settings.font.numbers,
-          size = 14.0,
+          -- family = settings.font.numbers,
+          -- size = 14.0,
         },
         highlight_color = colors.accent_color,
-        highlight = selected,
+        -- highlight = selected,
         string = spaceNames[workspace],
       },
       padding_left = 2,

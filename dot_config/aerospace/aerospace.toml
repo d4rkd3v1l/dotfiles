@@ -32,7 +32,7 @@ enable-normalization-opposite-orientation-for-nested-containers = true
 accordion-padding = 0
 
 # Possible values: tiles|accordion
-default-root-container-layout = 'tiles'
+default-root-container-layout = 'accordion'
 
 # Possible values: horizontal|vertical|auto
 # 'auto' means: wide monitor (anything wider than high) gets horizontal orientation,
@@ -52,7 +52,8 @@ on-focused-monitor-changed = []
 automatically-unhide-macos-hidden-apps = true
 
 [[on-window-detected]]
-if.app-name-regex-substring = 'Ghostty|iTerm|Terminal'
+if.app-name-regex-substring = 'Ghostty'
+if.window-title-regex-substring = 'Primary'
 run = 'move-node-to-workspace 1'
 
 [[on-window-detected]]
@@ -60,48 +61,42 @@ if.app-name-regex-substring = 'Brave|Safari|Chrome'
 run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
-if.app-name-regex-substring = 'Mail|Outlook|Thunderbird'
-if.window-title-regex-substring = 'New Message|Untitled|Re:|Fwd:|FW:'
-run = ['layout floating', 'move-node-to-workspace 3']
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Mail|Outlook|Thunderbird'
-run = 'move-node-to-workspace 3'
+if.app-name-regex-substring = 'Mail|Outlook'
+run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'Signal|WhatsApp|Teams'
-run = 'move-node-to-workspace 4'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Ghostty'
+if.window-title-regex-substring = 'Secondary'
+run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'Spotify|Music'
-run = 'move-node-to-workspace 5'
-
-# 6 = 2nd Ghostty
+run = 'move-node-to-workspace 3'
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'Firefox'
-run = 'move-node-to-workspace 7'
-
-# 8 = misc built-in
-# 9 = misc monitor 2
-# 10 = misc monitor 3
+run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'Cisco Secure Client'
-run = ['layout floating', 'move-node-to-workspace 9']
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Burp Suite'
-run = 'move-node-to-workspace 9'
+run = ['layout floating', 'move-node-to-workspace 2']
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'Burp Suite'
 if.window-title-regex-substring = 'Automatic project backup'
-run = ['layout floating', 'move-node-to-workspace 9']
+run = ['layout floating', 'move-node-to-workspace 2']
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Burp Suite'
+run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'Excel'
-run = 'move-node-to-workspace 10'
+run = 'move-node-to-workspace 3'
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'Finder'
@@ -200,28 +195,25 @@ run = 'layout floating'
     alt-equal = 'resize smart +50'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
-    alt-a = 'workspace 1'
-    alt-s = 'workspace 2'
-    alt-d = 'workspace 3'
-    alt-f = 'workspace 4'
-    alt-g = 'workspace 5'
-    alt-z = 'workspace 6'
-    alt-x = 'workspace 7'
-    alt-c = 'workspace 8'
-    alt-v = 'workspace 9'
-    alt-b = 'workspace 10'
+    alt-1 = 'workspace 1'
+    alt-2 = 'workspace 2'
+    alt-3 = 'workspace 3'
+
+    alt-a = 'exec-and-forget ~/.config/aerospace/focus-window.sh "Ghostty" "Primary" "open -na Ghostty --args --title=Primary"'
+    alt-s = 'exec-and-forget ~/.config/aerospace/focus-window.sh "Brave Browser" "" "open -na \"Brave Browser\""'
+    alt-d = 'exec-and-forget ~/.config/aerospace/focus-window.sh "Mail" "" "open -na Mail"'
+    alt-f = 'exec-and-forget ~/.config/aerospace/focus-window.sh "Signal" "" "open -na Signal"'
+    alt-g = 'exec-and-forget ~/.config/aerospace/focus-window.sh "WhatsApp" "" "open -na WhatsApp"'
+    alt-z = 'exec-and-forget ~/.config/aerospace/focus-window.sh "Ghostty" "Secondary" "open -na Ghostty --args --title=Secondary"'
+    alt-x = 'exec-and-forget ~/.config/aerospace/focus-window.sh "Firefox" "" "open -na Firefox"'
+    alt-c = 'exec-and-forget ~/.config/aerospace/focus-window.sh "Microsoft Excel" "" "open -na \"Microsoft Excel\""'
+    alt-v = 'exec-and-forget ~/.config/aerospace/focus-window.sh "Burp Suite Professional" "" "open -na \"Burp Suite Professional\""'
+    alt-b = 'exec-and-forget ~/.config/aerospace/focus-window.sh "Spotify" "" "open -na Spotify"'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
-    alt-shift-a = 'move-node-to-workspace 1'
-    alt-shift-s = 'move-node-to-workspace 2'
-    alt-shift-d = 'move-node-to-workspace 3'
-    alt-shift-f = 'move-node-to-workspace 4'
-    alt-shift-g = 'move-node-to-workspace 5'
-    alt-shift-z = 'move-node-to-workspace 6'
-    alt-shift-x = 'move-node-to-workspace 7'
-    alt-shift-c = 'move-node-to-workspace 8'
-    alt-shift-v = 'move-node-to-workspace 9'
-    alt-shift-b = 'move-node-to-workspace 10'
+    alt-shift-1 = 'move-node-to-workspace 1'
+    alt-shift-2 = 'move-node-to-workspace 2'
+    alt-shift-3 = 'move-node-to-workspace 3'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
     alt-tab = 'workspace-back-and-forth'
@@ -230,6 +222,7 @@ run = 'layout floating'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#mode
     alt-shift-semicolon = 'mode service'
+    ctrl-q = 'mode navigation'
 
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -252,13 +245,6 @@ run = 'layout floating'
     shift-down = ['volume set 0', 'mode main']
 
 [workspace-to-monitor-force-assignment]
-    1 = 'built-in' # a
-    2 = 2 # s
-    3 = 2 # d
-    4 = 3 # f
-    5 = 2 # g
-    6 = 2 # y 
-    7 = 2 # x
-    8 = 'built-in' # c
-    9 = 2 # v
-    10 = 3 # b
+    1 = 'built-in'
+    2 = 2
+    3 = 3

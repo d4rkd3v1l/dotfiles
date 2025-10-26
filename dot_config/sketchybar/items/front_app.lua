@@ -4,7 +4,7 @@ local app_icons = require("helpers.app_icons")
 
 local front_app = sbar.add("item", "front_app", {
   display = "active",
-  icon = { 
+  icon = {
     font = settings.icons,
     string = app_icons["Default"]
   },
@@ -12,7 +12,7 @@ local front_app = sbar.add("item", "front_app", {
 })
 
 sbar.add("bracket", "front_app.bracket", { front_app.name }, {
-  background = { 
+  background = {
     color = colors.bg1,
     border_color = colors.comment
   }
