@@ -4,7 +4,7 @@ local settings = require("settings")
 local appIcons = require("helpers.app_icons")
 
 local spaces = {}
-local maxAppsPerSpace = 4
+local maxAppsPerSpace = 10
 local spaceNames = {}
 spaceNames["1"] = "Tmux"
 spaceNames["2"] = "Main"

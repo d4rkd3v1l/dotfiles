@@ -40,6 +40,7 @@ return {
 	["Calculator"] = ":calculator:",
 	["Calculette"] = ":calculator:",
 	["Calendar"] = ":calendar:",
+	["Cisco Secure Client"] = ":vpn:",
 	["日历"] = ":calendar:",
 	["Fantastical"] = ":calendar:",
 	["Cron"] = ":calendar:",
