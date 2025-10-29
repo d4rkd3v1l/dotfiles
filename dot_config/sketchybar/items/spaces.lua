@@ -4,24 +4,269 @@ local settings = require("settings")
 local appIcons = require("helpers.app_icons")
 
 local spaces = {}
-local maxAppsPerSpace = 10
+local windowPoolSize = 10
 local spaceNames = {}
-spaceNames["1"] = "Tmux"
-spaceNames["2"] = "Main"
-spaceNames["3"] = "Misc"
+spaceNames["1"] = "1"
+spaceNames["2"] = "2"
+spaceNames["3"] = "3"
 
-local workspaces = get_workspaces()
-local prev_workspace = get_current_workspace()
-local current_workspace = get_current_workspace()
-local function split(str, sep)
-  local result = {}
-  local regex = ("([^%s]+)"):format(sep)
-  for each in str:gmatch(regex) do
-    table.insert(result, each)
+function map(tbl, f)
+  local t = {}
+  for k,v in pairs(tbl) do
+    t[k] = f(v)
   end
-  return result
+  return t
 end
 
+local function createWindowPool(space)
+  local windowPool = {}
+
+  for index = 1, windowPoolSize, 1 do
+    local window = sbar.add("item", "space." .. space.index .. ".window." .. index, {
+      drawing = false,
+      update_freq = 10,
+      icon = {
+        font = settings.icons,
+        padding_left = 5,
+        padding_right = 5,
+        color = colors.white,
+        highlight_color = colors.accent_color,
+      },
+      label = {
+        drawing = false,
+        highlight_color = colors.accent_color,
+      },
+      padding_left = 2,
+      padding_right = 2,
+      background = {
+        height = 24,
+        corner_radius = 7,
+        color = colors.transparent,
+        border_color = colors.transparent
+      },
+    })
+
+    local badge = sbar.add("item", "space." .. space.index .. ".window." .. index .. ".badge", {
+      drawing = false,
+      padding_left = -13,
+      padding_right = 2,
+      y_offset = 5,
+      icon = { drawing = false },
+      label = {
+        padding_left = 4,
+        padding_right = 4,
+        align = "center",
+        y_offset = 1,
+        font = {
+          family = settings.font.numbers,
+          size = 10.0,
+        },
+      },
+      background = {
+        height = 14,
+        corner_radius = 7,
+        color = colors.red,
+        border_width = 0,
+      }
+    })
+
+    local windowItem = {
+      window = window,
+      badge = badge,
+    }
+
+    table.insert(windowPool, windowItem)
+  end
+
+  return windowPool
+end
+
+local function createSpaces(workspaceData)
+  local spaces = {}
+
+  for index, spaceData in ipairs(workspaceData) do
+    local items = {}
+
+    local title = sbar.add("item", "space." .. index .. ".title", {
+      icon = {
+        drawing = false,
+      },
+      label = {
+        string = spaceData.title,
+        highlight_color = colors.accent_color,
+        font = {
+          -- family = settings.font.numbers,
+          size = 10,
+        },
+        y_offset = 4
+      }
+    })
+    table.insert(items, title.name)
+
+    local pool = createWindowPool(spaceData)
+    for index, item in ipairs(pool) do
+      table.insert(items, item.window.name)
+      table.insert(items, item.badge.name)
+    end
+
+    local space = sbar.add("bracket", "space." .. index, items, {
+      background = {
+        color = colors.bg1,
+        border_width = 2
+      }
+    })
+
+    sbar.add("item", "space." .. index .. ".padding", {
+      script = "",
+      width = 5,
+    })
+
+    local spaceBracket = {
+      bracket = space,
+      title = title,
+      pool = pool,
+    }
+
+    table.insert(spaces, spaceBracket)
+  end
+
+  return spaces
+end
+
+function groupBy(tbl, key)
+  local grouped = {}
+  for _, item in ipairs(tbl) do
+    local groupValue = item[key]
+    if groupValue ~= nil then
+      grouped[groupValue] = grouped[groupValue] or {}
+      table.insert(grouped[groupValue], item)
+    end
+  end
+  return grouped
+end
+
+local function getAerospaceSpaces(callback)
+  sbar.exec("aerospace list-workspaces --all --format '%{workspace}%{workspace-is-focused}' --json", function(result)
+    local data = map(result, function(item) 
+      local spaceData = {
+        index = item.workspace,
+        title = spaceNames[item.workspace],
+        isFocused = item["workspace-is-focused"],
+      }
+      return spaceData
+    end)
+    callback(data)
+  end)
+end
+
+local function getAerospaceWindows(callback)
+  sbar.exec("aerospace list-windows --all --format '%{workspace}%{window-id}%{app-name}' --json", function(result)
+    sbar.exec("aerospace list-windows --focused --format '%{window-id}' --json", function(focusedWindowResult)
+      local focusedWindowId = focusedWindowResult[1]["window-id"]
+      local data = map(result, function(item) 
+        local windowData = {
+          spaceIndex = item["workspace"],
+          windowId = item["window-id"],
+          appName = item["app-name"],
+          isFocused = item["window-id"] == focusedWindowId,
+        }
+        return windowData
+      end)
+      data = groupBy(data, "spaceIndex")
+      callback(data)
+      end)
+  end)
+end
+
+local function updateBadge(appName, badge)
+  -- Need to strip LTR marker \u200E as e.g. WhatsApp uses it
+  sbar.exec("osascript ./helpers/statuslabel.applescript \"" .. appName:gsub("\u{200E}", "") .. "\"", function(badgeCount)
+    local badgeCountAsNumber = tonumber(badgeCount)
+    local showBadge = badgeCountAsNumber == nil or badgeCountAsNumber ~= 0
+
+    badge:set({
+      drawing = showBadge,
+      label = {
+        string = badgeCount
+      }
+    })
+  end)
+end
+
+local function updateSpaces(spaceData, windowData)
+  for spaceIndex, space in ipairs(spaceData) do
+    spaces[spaceIndex].title:set {
+      label = {
+        highlight = space.isFocused,
+      },
+    }
+
+    spaces[spaceIndex].bracket:set {
+      background = {
+        border_color = space.isFocused and colors.accent_color or colors.bg2,
+      }
+    }
+
+    spaces[spaceIndex].title:subscribe("mouse.clicked", function(env)
+      sbar.exec("aerospace workspace --fail-if-noop " .. space.index)
+    end)
+
+    for windowIndex = 1, windowPoolSize, 1 do
+      local window = windowData[space.index][windowIndex]
+      local windowItem = spaces[spaceIndex].pool[windowIndex].window
+      local badgeItem = spaces[spaceIndex].pool[windowIndex].badge
+
+      if window ~= nil then
+        local lookup = appIcons[window.appName]
+        local icon = ((lookup == nil) and appIcons["Default"] or lookup)
+
+        windowItem:set {
+          drawing = true,
+          icon = {
+            string = icon,
+            highlight = window.isFocused,
+          },
+          label = {
+            drawing = window.isFocused,
+            string = window.appName,
+            highlight = window.isFocused,
+          }
+        }
+
+        windowItem:subscribe("mouse.clicked", function(env)
+          sbar.exec("aerospace focus --window-id " .. window.windowId)
+        end)
+
+        updateBadge(window.appName, badgeItem)
+
+        windowItem:subscribe({ "forced", "routine", "system_woke" }, function(env)
+          updateBadge(window.appName, badgeItem)
+        end)
+
+      else
+        windowItem:set {
+          drawing = false
+        }
+
+        badgeItem:set {
+          drawing = false
+        }
+
+        -- "unsubscribe", no idea if this is necessary or even makes any sense
+        windowItem:subscribe({ "mouse.clicked", "forced", "routine", "system_woke" }, function() end)
+      end
+    end
+  end
+end
+
+getAerospaceSpaces(function(spaceData)
+  getAerospaceWindows(function(windowData)
+    spaces = createSpaces(spaceData)
+    updateSpaces(spaceData, windowData)
+  end)
+end)
+
+--[[
 local function updateStatusLabel(app, isSelected)
   -- Need to strip LTR marker \u200E as e.g. WhatsApp uses it
   sbar.exec("osascript ./helpers/statuslabel.applescript \"" .. app.appName:gsub("\u{200E}", "") .. "\"", function(statusLabel)
@@ -59,7 +304,7 @@ local function updateSpaces()
 
       -- Update apps (actually windows)
       sbar.animate("tanh", 10, function()
-        for appIndex = 0, maxAppsPerSpace, 1 do
+        for appIndex = 0, windowPoolSize, 1 do
           local aerospaceApp = aerospaceApps[appIndex]
           local app = spaces[workspace].apps[appIndex]
           if aerospaceApp ~= nil then
@@ -98,12 +343,12 @@ local function updateSpaces()
         if next(aerospaceApps) == nil then
           app = spaces[workspace].apps[1]
           app.app:set({
+            drawing = true,
+            icon = {
+              drawing = false,
+            },
+            label = {
               drawing = true,
-              icon = {
-                drawing = false,
-              },
-              label = {
-                drawing = true,
               string = "—",
               highlight = selected,
             },
@@ -119,7 +364,7 @@ end
 for spaceIndex, workspace in ipairs(workspaces) do
   local apps = {}
   local appNames = {}
-  for appIndex = 0, maxAppsPerSpace, 1 do
+  for appIndex = 0, windowPoolSize, 1 do
     local app = sbar.add("item", "space." .. workspace .. ".app." .. appIndex, {
       drawing = (appIndex == 0) and true or false,
       update_freq = 10,
@@ -212,11 +457,7 @@ for spaceIndex, workspace in ipairs(workspaces) do
 
   updateSpaces()
 end
-
-local space_window_observer = sbar.add("item", {
-  drawing = false,
-  updates = true
-})
+]]
 
 -- Handles the small icon indicator for spaces / menus changes
 local spaces_indicator = sbar.add("item", "spaces", {
@@ -237,16 +478,26 @@ local spaces_indicator = sbar.add("item", "spaces", {
 })
 
 -- Event handles
-space_window_observer:subscribe("aerospace_workspace_change", function(env)
-  print(env.PREV_WORKSPACE .. " -> " .. env.FOCUSED_WORKSPACE)
-  prev_workspace = env.PREV_WORKSPACE
-  current_workspace = env.FOCUSED_WORKSPACE
-end)
+
+local space_window_observer = sbar.add("item", {
+  drawing = false,
+  updates = true
+})
 
 space_window_observer:subscribe("aerospace_focus_change", function(env)
-  updateSpaces()
+  getAerospaceSpaces(function(spaceData)
+    getAerospaceWindows(function(windowData)
+      updateSpaces(spaceData, windowData)
+    end)
+  end)
 end)
 
 spaces_indicator:subscribe("mouse.clicked", function(env)
   sbar.trigger("swap_menus_and_spaces")
+
+  getAerospaceSpaces(function(spaceData)
+    getAerospaceWindows(function(windowData)
+      updateSpaces(spaceData, windowData)
+    end)
+  end)
 end)
