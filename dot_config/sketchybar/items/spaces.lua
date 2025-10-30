@@ -6,9 +6,9 @@ local appIcons = require("helpers.app_icons")
 local spaces = {}
 local windowPoolSize = 10
 local spaceNames = {}
-spaceNames["1"] = "1"
-spaceNames["2"] = "2"
-spaceNames["3"] = "3"
+spaceNames["1"] = "Tmux"
+spaceNames["2"] = "Main"
+spaceNames["3"] = "Misc"
 
 function map(tbl, f)
   local t = {}
@@ -77,6 +77,7 @@ local function createWindowPool(space)
       },
       label = {
         highlight_color = colors.accent_color,
+        -- max_chars = 10,
       },
       padding_left = 0,
       padding_right = 4,
@@ -115,11 +116,12 @@ local function createSpaces(workspaceData)
         color = colors.comment,
         highlight_color = colors.accent_color,
         font = {
-          -- family = settings.font.numbers,
-          size = 10,
+          family = settings.font.numbers,
+          style = settings.font.style_map["Bold"],
+          size = 9.0,
         },
-        y_offset = 4
-      }
+        y_offset = 4,
+      },
     })
     table.insert(items, title.name)
 
@@ -133,7 +135,7 @@ local function createSpaces(workspaceData)
     local space = sbar.add("bracket", "space." .. index, items, {
       background = {
         color = colors.bg1,
-        border_width = 2
+        border_width = 2,
       }
     })
 

@@ -11,7 +11,7 @@ on run argv
           return statusLabel
         end if
       on error # e.g. when app not found
-        return -1
+        return 0
       end try
     end tell
   end tell
