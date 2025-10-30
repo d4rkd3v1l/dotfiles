@@ -22,19 +22,18 @@ local function createWindowPool(space)
   local windowPool = {}
 
   for index = 1, windowPoolSize, 1 do
-    local window = sbar.add("item", "space." .. space.index .. ".window." .. index, {
+    local icon = sbar.add("item", "space." .. space.index .. ".window." .. index .. ".icon", {
       drawing = false,
       update_freq = 10,
       icon = {
         font = settings.icons,
         padding_left = 5,
         padding_right = 5,
-        color = colors.white,
+        color = colors.grey,
         highlight_color = colors.accent_color,
       },
       label = {
         drawing = false,
-        highlight_color = colors.accent_color,
       },
       padding_left = 2,
       padding_right = 2,
@@ -70,8 +69,28 @@ local function createWindowPool(space)
       }
     })
 
+    local label = sbar.add("item", "space." .. space.index .. ".window." .. index .. ".label", {
+      drawing = false,
+      update_freq = 10,
+      icon = {
+        drawing = false,
+      },
+      label = {
+        highlight_color = colors.accent_color,
+      },
+      padding_left = 0,
+      padding_right = 4,
+      background = {
+        height = 24,
+        corner_radius = 7,
+        color = colors.transparent,
+        border_color = colors.transparent
+      },
+    })
+
     local windowItem = {
-      window = window,
+      icon = icon,
+      label = label,
       badge = badge,
     }
 
@@ -93,6 +112,7 @@ local function createSpaces(workspaceData)
       },
       label = {
         string = spaceData.title,
+        color = colors.comment,
         highlight_color = colors.accent_color,
         font = {
           -- family = settings.font.numbers,
@@ -105,8 +125,9 @@ local function createSpaces(workspaceData)
 
     local pool = createWindowPool(spaceData)
     for index, item in ipairs(pool) do
-      table.insert(items, item.window.name)
+      table.insert(items, item.icon.name)
       table.insert(items, item.badge.name)
+      table.insert(items, item.label.name)
     end
 
     local space = sbar.add("bracket", "space." .. index, items, {
@@ -213,19 +234,25 @@ local function updateSpaces(spaceData, windowData)
 
     for windowIndex = 1, windowPoolSize, 1 do
       local window = windowData[space.index][windowIndex]
-      local windowItem = spaces[spaceIndex].pool[windowIndex].window
+      local iconItem = spaces[spaceIndex].pool[windowIndex].icon
+      local labelItem = spaces[spaceIndex].pool[windowIndex].label
       local badgeItem = spaces[spaceIndex].pool[windowIndex].badge
 
       if window ~= nil then
         local lookup = appIcons[window.appName]
         local icon = ((lookup == nil) and appIcons["Default"] or lookup)
 
-        windowItem:set {
+        iconItem:set {
           drawing = true,
           icon = {
             string = icon,
+            color = space.isFocused and colors.with_alpha(colors.accent_color, 0.4) or colors.comment,
             highlight = window.isFocused,
           },
+        }
+
+        labelItem:set {
+          drawing = true,
           label = {
             drawing = window.isFocused,
             string = window.appName,
@@ -233,18 +260,29 @@ local function updateSpaces(spaceData, windowData)
           }
         }
 
-        windowItem:subscribe("mouse.clicked", function(env)
+        iconItem:subscribe("mouse.clicked", function(env)
+          sbar.exec("aerospace focus --window-id " .. window.windowId)
+        end)
+
+        labelItem:subscribe("mouse.clicked", function(env)
+          sbar.exec("aerospace focus --window-id " .. window.windowId)
+        end)
+
+        badgeItem:subscribe("mouse.clicked", function(env)
           sbar.exec("aerospace focus --window-id " .. window.windowId)
         end)
 
         updateBadge(window.appName, badgeItem)
-
-        windowItem:subscribe({ "forced", "routine", "system_woke" }, function(env)
+        iconItem:subscribe({ "forced", "routine", "system_woke" }, function(env)
           updateBadge(window.appName, badgeItem)
         end)
 
       else
-        windowItem:set {
+        iconItem:set {
+          drawing = false
+        }
+
+        labelItem:set {
           drawing = false
         }
 
@@ -253,7 +291,9 @@ local function updateSpaces(spaceData, windowData)
         }
 
         -- "unsubscribe", no idea if this is necessary or even makes any sense
-        windowItem:subscribe({ "mouse.clicked", "forced", "routine", "system_woke" }, function() end)
+        iconItem:subscribe({ "mouse.clicked", "forced", "routine", "system_woke" }, function() end)
+        labelItem:subscribe({ "mouse.clicked", "forced", "routine", "system_woke" }, function() end)
+        badgeItem:subscribe({ "mouse.clicked", "forced", "routine", "system_woke" }, function() end)
       end
     end
   end
