@@ -37,12 +37,6 @@ local function createWindowPool(space)
       },
       padding_left = 2,
       padding_right = 2,
-      background = {
-        height = 24,
-        corner_radius = 7,
-        color = colors.transparent,
-        border_color = colors.transparent
-      },
     })
 
     local badge = sbar.add("item", "space." .. space.index .. ".window." .. index .. ".badge", {
@@ -71,22 +65,17 @@ local function createWindowPool(space)
 
     local label = sbar.add("item", "space." .. space.index .. ".window." .. index .. ".label", {
       drawing = false,
-      update_freq = 10,
       icon = {
         drawing = false,
       },
       label = {
         highlight_color = colors.accent_color,
-        -- max_chars = 10,
+        max_chars = 10,
+        padding_left = 0,
+        padding_right = 5,
       },
-      padding_left = 0,
-      padding_right = 4,
-      background = {
-        height = 24,
-        corner_radius = 7,
-        color = colors.transparent,
-        border_color = colors.transparent
-      },
+      padding_left = 2,
+      padding_right = 2,
     })
 
     local windowItem = {
@@ -122,6 +111,7 @@ local function createSpaces(workspaceData)
         },
         y_offset = 4,
       },
+      padding_right = 0,
     })
     table.insert(items, title.name)
 
@@ -267,7 +257,7 @@ local function updateSpaces(spaceData, windowData)
         end)
 
         labelItem:subscribe("mouse.clicked", function(env)
-          sbar.exec("aerospace focus --window-id " .. window.windowId)
+          sbar.trigger("swap_menus_and_spaces")
         end)
 
         badgeItem:subscribe("mouse.clicked", function(env)
