@@ -2,20 +2,27 @@ local icons = require("icons")
 local colors = require("colors")
 local settings = require("settings")
 
+local accent_color = colors.blue
+
 local popup_width = 250
 
-local volume_item = sbar.add("item", "widgets.volume", {
+local volume_item = sbar.add("item", "volume", {
   position = "right",
-  popup = { align = "center" }
+  popup = {
+    align = "center",
+  },
 })
 
-sbar.add("bracket", "widgets.volume.bracket", { 
-  volume_item.name 
+local volume_bracket = sbar.add("bracket", "volume.bracket", {
+  volume_item.name
 }, {
-  background = { color = colors.bg1 }
+  background = {
+    color = colors.bg1,
+    border_color = accent_color,
+  },
 })
 
-sbar.add("item", "widgets.volume.padding", {
+sbar.add("item", "volume.padding", {
   position = "right",
   width = settings.group_paddings
 })
@@ -34,7 +41,7 @@ local volume_slider = sbar.add("slider", popup_width, {
       drawing = true,
     },
   },
-  background = { 
+  background = {
     color = colors.bg1,
     height = 2,
     y_offset = -20
@@ -55,20 +62,28 @@ volume_item:subscribe("volume_change", function(env)
     icon = icons.volume._10
   end
 
-  local volume_label
-  if volume > 0 then
-    volume_label = { 
-      drawing = true,
-      string = volume .. "%"
-    }
-  else
-    volume_label = {
-      drawing = false
-    }
-  end
+  volume_item:set({
+    icon = {
+      string = icon,
+      color = volume > 0 and accent_color or colors.comment,
+    },
+    label = {
+      drawing = volume > 0,
+      string = volume .. "%",
+      color = accent_color,
+    },
+  })
+  volume_bracket:set({
+    background = {
+      border_color = volume > 0 and accent_color or colors.comment,
+    },
+  })
 
-  volume_item:set({ icon = { string = icon }, label = volume_label })
-  volume_slider:set({ slider = { percentage = volume } })
+  volume_slider:set({
+    slider = {
+      percentage = volume
+    }
+  })
 end)
 
 local function volume_collapse_details()
@@ -92,7 +107,6 @@ local function volume_toggle_details(env)
       current_audio_device = result:sub(1, -2)
       sbar.exec("SwitchAudioSource -a -t output", function(available)
         current = current_audio_device
-        local color = colors.grey
         local counter = 0
 
         for device in string.gmatch(available, '[^\r\n]+') do

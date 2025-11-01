@@ -10,7 +10,7 @@ spaceNames["1"] = "Tmux"
 spaceNames["2"] = "Main"
 spaceNames["3"] = "Misc"
 
-function map(tbl, f)
+local function map(tbl, f)
   local t = {}
   for k,v in pairs(tbl) do
     t[k] = f(v)
@@ -125,13 +125,12 @@ local function createSpaces(workspaceData)
     local space = sbar.add("bracket", "space." .. index, items, {
       background = {
         color = colors.bg1,
-        border_width = 2,
       }
     })
 
     sbar.add("item", "space." .. index .. ".padding", {
       script = "",
-      width = 5,
+      width = settings.group_paddings,
     })
 
     local spaceBracket = {
@@ -216,11 +215,11 @@ local function updateSpaces(spaceData, windowData)
 
     spaces[spaceIndex].bracket:set {
       background = {
-        border_color = space.isFocused and colors.accent_color or colors.bg2,
+        border_color = space.isFocused and colors.accent_color or colors.comment,
       }
     }
 
-    spaces[spaceIndex].title:subscribe("mouse.clicked", function(env)
+    spaces[spaceIndex].title:subscribe("mouse.clicked", function()
       sbar.exec("aerospace workspace --fail-if-noop " .. space.index)
     end)
 
@@ -252,20 +251,20 @@ local function updateSpaces(spaceData, windowData)
           }
         }
 
-        iconItem:subscribe("mouse.clicked", function(env)
+        iconItem:subscribe("mouse.clicked", function()
           sbar.exec("aerospace focus --window-id " .. window.windowId)
         end)
 
-        labelItem:subscribe("mouse.clicked", function(env)
+        labelItem:subscribe("mouse.clicked", function()
           sbar.trigger("swap_menus_and_spaces")
         end)
 
-        badgeItem:subscribe("mouse.clicked", function(env)
+        badgeItem:subscribe("mouse.clicked", function()
           sbar.exec("aerospace focus --window-id " .. window.windowId)
         end)
 
         updateBadge(window.appName, badgeItem)
-        iconItem:subscribe({ "forced", "routine", "system_woke" }, function(env)
+        iconItem:subscribe({ "forced", "routine", "system_woke" }, function()
           updateBadge(window.appName, badgeItem)
         end)
 
@@ -516,7 +515,7 @@ local space_window_observer = sbar.add("item", {
   updates = true
 })
 
-space_window_observer:subscribe("aerospace_focus_change", function(env)
+space_window_observer:subscribe("aerospace_focus_change", function()
   getAerospaceSpaces(function(spaceData)
     getAerospaceWindows(function(windowData)
       updateSpaces(spaceData, windowData)
@@ -524,7 +523,7 @@ space_window_observer:subscribe("aerospace_focus_change", function(env)
   end)
 end)
 
-spaces_indicator:subscribe("mouse.clicked", function(env)
+spaces_indicator:subscribe("mouse.clicked", function()
   sbar.trigger("swap_menus_and_spaces")
 
   getAerospaceSpaces(function(spaceData)

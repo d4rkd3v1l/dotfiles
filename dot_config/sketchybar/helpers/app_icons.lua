@@ -215,7 +215,7 @@ return {
 	["Pages 文稿"] = ":pages:",
 	["Parallels Desktop"] = ":parallels:",
 	["Parsec"] = ":parsec:",
-	["Preview"] = ":pdf:",
+	["Preview"] = ":preview:",
 	["预览"] = ":pdf:",
 	["Skim"] = ":pdf:",
 	["zathura"] = ":pdf:",

@@ -15,7 +15,7 @@ local apple = sbar.add("item", "apple", {
   label = { drawing = false },
   background = {
     color = colors.bg1,
-    -- border_color = colors.black,
+    border_color = colors.white,
     -- border_width = 1
   },
   padding_left = 1,
@@ -24,4 +24,4 @@ local apple = sbar.add("item", "apple", {
 })
 
 -- Padding item required because of bracket
-sbar.add("item", { width = 7 })
+sbar.add("item", { width = 5 })
