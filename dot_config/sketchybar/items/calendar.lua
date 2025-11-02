@@ -14,7 +14,9 @@ local time = sbar.add("item", "time", {
   position = "right",
   padding_left = -5,
   width = 0,
-  icon = { drawing = false },
+  icon = {
+    drawing = false,
+  },
   label = {
     font = {
       -- family = settings.font.numbers,
@@ -30,7 +32,9 @@ local time = sbar.add("item", "time", {
 local date = sbar.add("item", "date", {
   position = "right",
   padding_left = -5,
-  icon = { drawing = false },
+  icon = {
+    drawing = false,
+  },
   label = {
     font = {
       -- family = settings.font.numbers,
