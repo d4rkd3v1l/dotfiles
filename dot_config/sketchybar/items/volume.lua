@@ -2,7 +2,7 @@ local icons = require("icons")
 local colors = require("colors")
 local settings = require("settings")
 
-local accent_color = colors.blue
+local accent_color = colors.yellow
 
 local popup_width = 250
 

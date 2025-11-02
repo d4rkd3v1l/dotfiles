@@ -5,7 +5,6 @@ local settings = require("settings")
 local accent_color = colors.purple
 local popup_width = 250
 
-
 local wifi_item = sbar.add("item", "wifi", {
   position = "right",
   label = {
@@ -14,18 +13,16 @@ local wifi_item = sbar.add("item", "wifi", {
   },
 })
 
-local wifi_bracket = sbar.add("bracket", "wifi.bracket", {
-  wifi_item.name,
-}, {
-    background = {
-      color = colors.bg1,
-      border_color = accent_color,
-    },
-    popup = {
-      align = "center",
-      height = 30,
-    },
-  })
+local wifi_bracket = sbar.add("bracket", "wifi.bracket", { wifi_item.name }, {
+  background = {
+    color = colors.bg1,
+    border_color = accent_color,
+  },
+  popup = {
+    align = "center",
+    height = 30,
+  },
+})
 
 local hostname_item = sbar.add("item", {
   position = "popup." .. wifi_bracket.name,
