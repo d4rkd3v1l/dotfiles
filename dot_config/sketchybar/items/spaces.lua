@@ -6,9 +6,9 @@ local appIcons = require("helpers.app_icons")
 local spaces = {}
 local windowPoolSize = 10
 local spaceNames = {}
-spaceNames["1"] = "Tmux"
-spaceNames["2"] = "Main"
-spaceNames["3"] = "Misc"
+spaceNames["1"] = "1"
+spaceNames["2"] = "2"
+spaceNames["3"] = "3"
 
 local function map(tbl, f)
   local t = {}
