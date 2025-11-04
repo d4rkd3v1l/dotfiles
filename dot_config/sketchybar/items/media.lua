@@ -19,7 +19,7 @@ local spotify_title = sbar.add("item", "spotify.title", {
       size = 11.0,
     },
     color = colors.comment,
-    max_chars = 10,
+    max_chars = 11,
     string = "no title",
   },
   y_offset = -6,
@@ -28,6 +28,7 @@ local spotify_title = sbar.add("item", "spotify.title", {
 local spotify_artist = sbar.add("item", "spotify.artist", {
   position = "right",
   padding_left = -5,
+  width = 70,
   icon = {
     drawing = false,
   },
@@ -38,7 +39,7 @@ local spotify_artist = sbar.add("item", "spotify.artist", {
       size = 10.0,
     },
     color = colors.comment,
-    max_chars = 11,
+    max_chars = 12,
     string = "no artist",
   },
   y_offset = 6,

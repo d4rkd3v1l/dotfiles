@@ -36,7 +36,7 @@ sbar.add("item", {
 
 bluetooth_item:subscribe({"bluetooth_change", "system_woke"}, function()
   sbar.exec([[system_profiler SPBluetoothDataType -json -detailLevel mini 2>/dev/null | jq -r '.SPBluetoothDataType[].controller_properties.controller_state' | tr -d '\n']], function(bluetooth_state)
-    sbar.exec([[system_profiler SPBluetoothDataType -json -detailLevel mini 2>/dev/null | jq -r '.SPBluetoothDataType[].device_connected[] | to_entries[] | select(.value.device_minorType == "Headphones") | .key']], function(headphones_name)
+    sbar.exec([[system_profiler SPBluetoothDataType -json -detailLevel mini 2>/dev/null | jq -r '.SPBluetoothDataType[].device_connected[] | to_entries[] | select(.value.device_minorType == "Headphones" or .value.device_minorType == "Headset") | .key']], function(headphones_name)
       local bluetooth_on = bluetooth_state == "attrib_on"
       local headphones_connected = headphones_name ~= ""
 
