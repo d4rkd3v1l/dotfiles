@@ -10,6 +10,8 @@ brew "node"
 brew "fzf"
 brew "rg"
 brew "fd"
+brew "node"
+brew "markdownlint-cli2"
 
 # lazygit
 brew "lazygit"
