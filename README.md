@@ -2,10 +2,12 @@
 
 😈 d4Rkify your environment 😈
 
-Currently supports:
+⚠️ Fully support only for macOS and Debian ⚠️
 
-- Aerospace (macOS)
-- Sketchybar (macOS)
+## Features
+
+### All platforms
+
 - Ghostty
 - Zsh
 - p10k
@@ -15,14 +17,24 @@ Currently supports:
 - lazygit
 - bat
 
-⚠️ Fully support only for macOS and Debian ⚠️
+### macOS only
+
+- Aerospace
+- Sketchybar
+
+### Linux only (WiP)
+
+- Hyprland
+- Waybar
+- wofi
 
 ## Install
 
 Chezmoi is used as a dotfiles manager. Here's how to install it.
 
+### macOS
+
 ```bash
-# macOS
 brew install chezmoi
 
 brew install --cask nikitabobko/tap/aerospace
@@ -33,12 +45,15 @@ brew install --cask sf-pro
 brew install --cask sf-mono
 brew install --cask sf-symbols
 brew install lua
-(git clone https://github.com/FelixKratz/SbarLua.git /tmp/SbarLua && cd /tmp/SbarLua/ && make install && rm -rf /tmp/SbarLua/)
+git clone https://github.com/FelixKratz/SbarLua.git /tmp/SbarLua && cd /tmp/SbarLua/ && make install && rm -rf /tmp/SbarLua/
 brew install borders
+```
 
-# Debian
-wget https://github.com/twpayne/chezmoi/releases/download/v2.65.1/chezmoi_2.65.1_linux_amd64.deb
-sudo dpkg -i chezmoi_2.65.1_linux_amd64.deb
+### Debian
+
+```bash
+wget https://github.com/twpayne/chezmoi/releases/download/v2.67.0/chezmoi_2.67.0_linux_amd64.deb
+sudo dpkg -i chezmoi_2.67.0_linux_amd64.deb
 ```
 
 ## Init
