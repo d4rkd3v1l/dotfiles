@@ -11,6 +11,28 @@ function removeLastLine() {
   echo -e -n "\033[1A\033[K"
 }
 
+function execute() {
+  local func=$1
+  local name=$2
+  local question=$3
+  local skip=$4
+
+  echo
+  echo -e "${DefaultColor}----- [ $name ] -----${ColorOff}"
+
+  if [[ "${DOTFILES_FRONTEND:-interactive}" == "noninteractive" ]]; then
+    $func
+  else
+    while true; do
+      read -p "$question" yn
+      case $yn in
+        [Nn]*) removeLastLine; echo "$skip"; break;;
+        *) removeLastLine; $func; break;;
+      esac
+    done
+  fi
+}
+
 {{ if eq .chezmoi.os "darwin" -}}
 
 echo -e "${DefaultColor}--- [ Resolving requirements for macOS ] ---${ColorOff}"
@@ -46,133 +68,81 @@ function finderAndDock() {
   echo "✅ Finder and Dock configured successfully."
 }
 
-echo
-echo -e "${DefaultColor}----- [ brew ] -----${ColorOff}"
-while true; do
-  read -p "❓ Install brew packages? (Y/n) " yn
-  case $yn in
-    [Nn]*) removeLastLine; echo "⚠️ Skipped brew packages installation."; break;;
-    *) removeLastLine; installBrew; break;;
-  esac
-done
-
-echo
-echo -e "${DefaultColor}----- [ Finder & Dock ] -----${ColorOff}"
-while true; do
-  read -p "❓ Configure Finder & Dock? (Y/n) " yn
-  case $yn in
-    [Nn]*) removeLastLine; echo "⚠️ Skipped Finder and Dock configuration."; break;;
-    *) removeLastLine; finderAndDock; break;;
-  esac
-done
+execute installBrew "brew" "❓ Install brew packages? (Y/n) " "⚠️ Skipped brew packages installation."
+execute finderAndDock "Finder & Dock" "❓ Configure Finder & Dock? (Y/n) " "⚠️ Skipped Finder and Dock configuration."
 
 {{- else if eq .chezmoi.os "linux" -}}
-  {{- if (or (eq .chezmoi.osRelease.id "debian") (eq .chezmoi.osRelease.idLike "debian")) -}}
+{{- if (or (eq .chezmoi.osRelease.id "debian") (eq .chezmoi.osRelease.idLike "debian")) -}}
 
-  echo -e "${DefaultColor}--- [ Resolving requirements for Debian ] ---${ColorOff}"
+echo -e "${DefaultColor}--- [ Resolving requirements for Debian ] ---${ColorOff}"
 
-  function apt() {
-    echo "⏳ Installing APT packages..."
-    sudo apt install -y \
-      curl \
-      wget \
-      git \
-      zsh \
-      tmux
+function apt() {
+  echo "⏳ Installing APT packages..."
+  sudo apt install -y \
+    curl \
+    wget \
+    git \
+    zsh \
+    tmux
   }
 
-  function nix() { # Use https://github.com/dariogriffo/debian.griffo.io and debiab-experimental (nvim) instead?
-    # Nix package manager (for bleeding edge stuff like neovim)
-    echo "⏳ Installing Nix and Nix packages..."
-    if type -P nix >/dev/null 2>&1; then
-      echo "Nix already installed."
-    else
-      echo "Installing Nix..."
-      curl -L https://nixos.org/nix/install | sh -s -- --yes --no-modify-profile
-      . $HOME/.nix-profile/etc/profile.d/nix.sh
-    fi
-    echo "Installing Nix packages..."
-    nix-env -iA \
-      nixpkgs.neovim \
-      nixpkgs.fzf \
-      nixpkgs.ripgrep \
-      nixpkgs.fd \
-      nixpkgs.lazygit \
-      nixpkgs.bat \
-      nixpkgs.delta \
-      nixpkgs.eza \
-      nixpkgs.tlrc
+function nix() { # Use https://github.com/dariogriffo/debian.griffo.io and debiab-experimental (nvim) instead?
+  # Nix package manager (for bleeding edge stuff like neovim)
+  echo "⏳ Installing Nix and Nix packages..."
+  if type -P nix >/dev/null 2>&1; then
+    echo "Nix already installed."
+  else
+    echo "Installing Nix..."
+    curl -L https://nixos.org/nix/install | sh -s -- --yes --no-modify-profile
+    . $HOME/.nix-profile/etc/profile.d/nix.sh
+  fi
+  echo "Installing Nix packages..."
+  nix-env -iA \
+    nixpkgs.neovim \
+    nixpkgs.fzf \
+    nixpkgs.ripgrep \
+    nixpkgs.fd \
+    nixpkgs.lazygit \
+    nixpkgs.bat \
+    nixpkgs.delta \
+    nixpkgs.eza \
+    nixpkgs.tlrc
 
-    echo "✅ Nix packages installed successfully."
-  }
+  echo "✅ Nix packages installed successfully."
+}
 
-  function zsh() {
-    echo "⏳ Ensuring zsh is login shell..."
-    if [[ $(getent passwd $LOGNAME | cut -d: -f7) != "/bin/zsh" ]]; then
-      echo "Changing login shell to zsh..."
-      sudo chsh -s /bin/zsh $LOGNAME
-    else
-      echo "Login shell is already zsh."
-    fi
-    echo "✅ Zsh as login shell ensured successfully."
-  }
+function zsh() {
+  echo "⏳ Ensuring zsh is login shell..."
+  if [[ $(getent passwd $LOGNAME | cut -d: -f7) != "/bin/zsh" ]]; then
+    echo "Changing login shell to zsh..."
+    sudo chsh -s /bin/zsh $LOGNAME
+  else
+    echo "Login shell is already zsh."
+  fi
+  echo "✅ Zsh as login shell ensured successfully."
+}
 
-  function ghostty() {
-    # Ghostty
-    echo "⏳ Intalling Ghostty..."
-    if type -P ghostty >/dev/null 2>&1; then
-      echo "Ghostty already installed."
-    else
-      GHOSTTY_URL=$(curl -s https://api.github.com/repos/mkasberg/ghostty-ubuntu/releases/latest | grep -oP "https://github.com/mkasberg/ghostty-ubuntu/releases/download/[^\s/]+/ghostty_[^\s/_]+_{{ .chezmoi.arch }}_trixie.deb")
-      curl -Lo ghostty.deb "$GHOSTTY_URL"
-      sudo apt install -y -f ./ghostty.deb
-      rm ghostty.deb
-    fi
+function ghostty() {
+  # Ghostty
+  echo "⏳ Intalling Ghostty..."
+  if type -P ghostty >/dev/null 2>&1; then
+    echo "Ghostty already installed."
+  else
+    GHOSTTY_URL=$(curl -s https://api.github.com/repos/mkasberg/ghostty-ubuntu/releases/latest | grep -oP "https://github.com/mkasberg/ghostty-ubuntu/releases/download/[^\s/]+/ghostty_[^\s/_]+_{{ .chezmoi.arch }}_trixie.deb")
+    curl -Lo ghostty.deb "$GHOSTTY_URL"
+    sudo apt install -y -f ./ghostty.deb
+    rm ghostty.deb
+  fi
 
-    echo "✅ Ghostty installed successfully."
-  }
+  echo "✅ Ghostty installed successfully."
+}
 
-  echo
-  echo -e "${DefaultColor}----- [ APT ] -----${ColorOff}"
-  while true; do
-    read -p "❓ Install APT packages? (Y/n) " yn
-    case $yn in
-      [Nn]*) removeLastLine; echo "⚠️ Skipped APT packages installation."; break;;
-      *) removeLastLine; apt; break;;
-    esac
-  done
+execute apt "APT" "❓ Install APT packages? (Y/n) " "⚠️ Skipped APT packages installation."
+execute nix "Nix" "❓ Install Nix packages? (Y/n) " "⚠️ Skipped Nix packages installation."
+execute zsh "Zsh" "❓ Set Zsh as login shell? (Y/n) " "⚠️ Skipped ensuring Zsh as login shell."
+execute ghostty "Ghostty" "❓ Install Ghostty? (Y/n) " "⚠️ Skipped Ghostty installation."
 
-  echo
-  echo -e "${DefaultColor}----- [ Nix ] -----${ColorOff}"
-  while true; do
-    read -p "❓ Install Nix packages? (Y/n) " yn
-    case $yn in
-      [Nn]*) removeLastLine; echo "⚠️ Skipped Nix packages installation."; break;;
-      *) removeLastLine; nix; break;;
-    esac
-  done
-
-  echo
-  echo -e "${DefaultColor}----- [ Zsh ] -----${ColorOff}"
-  while true; do
-    read -p "❓ Set Zsh as login shell? (Y/n) " yn
-    case $yn in
-      [Nn]*) removeLastLine; echo "⚠️ Skipped ensuring Zsh as login shell."; break;;
-      *) removeLastLine; zsh; break;;
-    esac
-  done
-
-  echo
-  echo -e "${DefaultColor}----- [ Install Ghostty ] -----${ColorOff}"
-  while true; do
-    read -p "❓ Install Ghostty? (Y/n) " yn
-    case $yn in
-      [Nn]*) removeLastLine; echo "⚠️ Skipped Ghostty installation."; break;;
-      *) removeLastLine; ghostty; break;;
-    esac
-  done
-
-  {{- end }}
+{{- end }}
 {{- else -}}
 echo
 echo -e "${DefaultColor}--- [ Resolving requirements ] ---${ColorOff}"
@@ -224,24 +194,7 @@ function tmuxPlugins() {
   echo "✅ Tmux plugins installed successfully."
 }
 
-echo
-echo -e "${DefaultColor}----- [ Custom Fonts ] -----${ColorOff}"
-while true; do
-  read -p "❓ Install custom fonts? (Y/n) " yn
-  case $yn in
-    [Nn]*) removeLastLine; echo "⚠️ Skipped custom fonts installation."; break;;
-    *) removeLastLine; customFonts; break;;
-  esac
-done
-
-echo
-echo -e "${DefaultColor}----- [ Tmux Plugins ] -----${ColorOff}"
-while true; do
-  read -p "❓ Install tmux plugin manager and plugins? (Y/n) " yn
-  case $yn in
-    [Nn]*) removeLastLine; echo "⚠️ Skipped tmux plugins installation."; break;;
-    *) removeLastLine; tmuxPlugins; break;;
-  esac
-done
+execute customFonts "Fonts" "❓ Install custom fonts? (Y/n) " "⚠️ Skipped custom fonts installation."
+execute tmuxPlugins "Tmux Plugins" "❓ Install tmux plugin manager and plugins? (Y/n) " "⚠️ Skipped tmux plugins installation."
 
 # vi: ft=bash

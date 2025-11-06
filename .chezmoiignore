@@ -9,8 +9,13 @@
 {{ if ne .chezmoi.os "darwin" }}
 Brewfile
 Library/Application Support/**
+.config/aerospace/**
+.config/sketchybar/**
 {{ end }}
 
 {{ if ne .chezmoi.os "linux" }}
 .config/ghostty/**
+.config/hypr/**
+.config/waybar/**
+.config/wofi/**
 {{ end }}

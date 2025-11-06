@@ -28,7 +28,7 @@
 - Waybar
 - wofi
 
-## Install
+## Requirements
 
 Chezmoi is used as a dotfiles manager. Here's how to install it.
 
