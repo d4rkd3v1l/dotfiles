@@ -20,7 +20,7 @@ function execute() {
   echo
   echo -e "${DefaultColor}----- [ $name ] -----${ColorOff}"
 
-  if [[ "${DOTFILES_FRONTEND:-interactive}" == "noninteractive" ]]; then
+  if [[ "${DOTFILES_FRONTEND:-default}" == "noninteractive" ]]; then
     $func
   else
     while true; do
