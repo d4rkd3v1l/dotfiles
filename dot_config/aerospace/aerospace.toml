@@ -5,7 +5,7 @@
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
 after-startup-command = [
   'exec-and-forget sketchybar',
-  'exec-and-forget borders active_color=0xFFFF79C6 inactive_color=0x00000000 width=6.0'
+  'exec-and-forget borders active_color=0xff50fa7b inactive_color=0x00000000 width=6.0'
 ]
 
 # Notify Sketchybar about workspace change

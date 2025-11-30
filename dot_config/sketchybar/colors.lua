@@ -23,7 +23,7 @@ return {
   bg1 = 0xff363944,
   bg2 = 0xff414550,
 
-  accent_color = 0xffff79c6,
+  accent_color = 0xff50fa7b,
 
   with_alpha = function(color, alpha)
     if alpha > 1.0 or alpha < 0.0 then return color end
