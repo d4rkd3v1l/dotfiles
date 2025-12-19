@@ -1,6 +1,6 @@
 git:
-  paging:
-    colorArg: always
-    pager: delta --hyperlinks-file-link-format="lazygit-edit://{path}:{line}" 
+  pagers:
+    - colorArg: always
+      pager: delta --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
 os:
   editPreset: "nvim"
