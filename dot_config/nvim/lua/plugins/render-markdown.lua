@@ -1,6 +1,9 @@
 return {
   "MeanderingProgrammer/render-markdown.nvim",
   opts = {
+    latex = {
+      enabled = false,
+    },
     win_options = {
       conceallevel = {
         default = 0, --vim.o.conceallevel,
@@ -97,7 +100,7 @@ return {
     },
     checkbox = {
       enabled = true,
-      position = "inline",
+      -- position = "inline",
       unchecked = {
         icon = "   󰄱 ",
         highlight = "RenderMarkdownUnchecked",

@@ -92,37 +92,36 @@ export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
 
-_fzf_compgen_path() {
-  fd --hidden --exclude .git . "$1"
-}
-
-_fzf_compgen_dir() {
-  fd --type=d --hidden --exclude .git . "$1"
-}
-
-_fzf_comprun() {
-  local command=$1
-  shift
-
-  case "$command" in
-    cd)           fzf --preview 'eza --tree --level=1 --color=always {} | head -200' "$@" ;;
-    export|unset) fzf --preview "eval 'echo \$'{}" "$@" ;;
-    *)            fzf --preview 'bat -n --color=always --line-range :500 {}' "$@" ;;
-  esac
-}
-
 # fzf-tab preview customization
 zstyle ':fzf-tab:complete:export:*' fzf-preview "eval 'echo \$'$realpath"
 zstyle ':fzf-tab:complete:unset:*' fzf-preview "eval 'echo \$'$realpath"
 zstyle ':fzf-tab:*' fzf-preview '
-  local file=$realpath
-  case "$(file --mime-type -b $file)" in
-    inode/directory) eza --tree --level=1 --color=always "$file" | head -200 ;;
-    text/*) bat -n --color=always --line-range :500 "$file" ;;
-    image/*) chafa "$file" ;;
-    *) echo "No preview available."
-  esac'
+  local file="$realpath"
 
+  [[ -z "$file" || ! -e "$file" ]] && { echo "No preview available."; return; }
+
+  if [[ -d "$file" ]]; then
+    eza --tree --level=1 --color=always --icons "$file" | head -200
+    return
+  fi
+
+  local mime=$(file --mime-type -Lb -- "$file" 2>/dev/null || echo none)
+
+  case "$mime" in
+    application/pdf)
+      pdftotext "$file" - | head -200
+      ;;
+    application/zip)
+      zipinfo -1 "$file" | head -200
+      ;;
+    text/*)
+      bat -n --color=always --line-range :200 "$file"
+      ;;
+    *)
+      echo "No preview available."
+      ;;
+  esac
+'
 
 # Shell integrations
 source <(fzf --zsh)
