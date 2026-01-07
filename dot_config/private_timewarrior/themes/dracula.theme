@@ -1,0 +1,17 @@
+define theme:
+  description = "dracula.theme - by d4Rk"
+  colors:
+    exclusion = "white on black"
+    today     = "green"
+    holiday   = "gray4"
+    label     = "white"
+    ids       = "magenta"
+    debug     = "white on red"
+
+  palette:
+    color00 = "black on green"
+    color01 = "black on yellow"
+    color02 = "black on blue"
+    color03 = "black on magenta"
+    color04 = "black on cyan"
+    color05 = "black on white"
