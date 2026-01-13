@@ -1,5 +1,5 @@
 define theme:
-  description = "dracula.theme - by d4Rk"
+  description = "d4Rk.theme - by d4Rk"
   colors:
     exclusion = "white on black"
     today     = "green"
