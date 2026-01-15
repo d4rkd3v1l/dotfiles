@@ -52,8 +52,8 @@ brew install borders
 ### Debian
 
 ```bash
-wget https://github.com/twpayne/chezmoi/releases/download/v2.67.0/chezmoi_2.67.0_linux_amd64.deb
-sudo dpkg -i chezmoi_2.67.0_linux_amd64.deb
+wget https://github.com/twpayne/chezmoi/releases/download/v2.69.1/chezmoi_2.69.1_linux_amd64.deb
+sudo dpkg -i chezmoi_2.69.1_linux_amd64.deb
 ```
 
 ## Init
