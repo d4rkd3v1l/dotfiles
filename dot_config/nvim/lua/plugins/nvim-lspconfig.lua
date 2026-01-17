@@ -3,9 +3,6 @@ return {
   opts = {
     servers = {
       marksman = {},
-      sourcekit = {
-        cmd = { "xcrun", "sourcekit-lsp" },
-      },
     },
   },
 }

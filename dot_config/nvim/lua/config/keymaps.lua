@@ -4,6 +4,7 @@
 
 -- ESC mappings
 vim.keymap.set("i", "jk", "<ESC>")
+vim.keymap.set("i", "kj", "<ESC>")
 vim.keymap.set("i", "<C-c>", "<ESC>")
 
 -- Make x and c go into the black hole (don’t overwrite clipboard)
