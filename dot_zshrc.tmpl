@@ -1,3 +1,4 @@
+# vi: ft=bash
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -81,8 +82,6 @@ export ZSH_HIGHLIGHT_STYLES[precommand]="fg=green"
 
 # Keybindings
 bindkey '^r' history-incremental-search-backward
-bindkey '^p' history-search-backward
-bindkey '^n' history-search-forward
 
 # Aliases
 alias l='eza -lgaa'
@@ -125,5 +124,3 @@ zstyle ':fzf-tab:*' fzf-preview '
 
 # Shell integrations
 source <(fzf --zsh)
-
-# vi: ft=bash
