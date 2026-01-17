@@ -1,22 +1,26 @@
-# ul style
+# Unordered list style
 MD004:
   style: "dash"
 
 # Line length
 MD013: false
 
-# No duplicate heading
+# Multiple headings with the same content
 MD024:
   siblings_only: true
 
-# Blank line inside block quote
+# Blank line inside blockquote
 MD028: false
 
-# hr style
+# Horizontal rule style
 MD035:
   style: "---"
 
-# Single trailing newline
+# First line in a file should be a top-level heading
+MD041:
+  allow_preamble: true
+
+# Files should end with a single newline character
 MD047: true
 
 # Code fence style
