@@ -6,6 +6,7 @@ cursor-style = block
 cursor-style-blink = true
 shell-integration = zsh
 macos-titlebar-style = transparent
+macos-option-as-alt = true
 confirm-close-surface = false
 
 {{- if eq .chezmoi.os "linux" -}}
