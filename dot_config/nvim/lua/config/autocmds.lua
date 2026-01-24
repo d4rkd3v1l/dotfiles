@@ -38,6 +38,23 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+-- Markdown: Disable some LSP features that interfere with Tree-sitter highlighting
+-- (in order to make e.g. checked checkboxes "- [x]" highlights work properly)
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(args)
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    if not client then return end
+
+    if client.name == "marksman" then
+      client.server_capabilities.semanticTokensProvider = nil
+      client.server_capabilities.codeLensProvider = nil
+      client.server_capabilities.foldingRangeProvider = false
+      client.server_capabilities.documentFormattingProvider = false
+      client.server_capabilities.colorProvider = nil
+    end
+  end,
+})
+
 -- Open Trouble symbols for markdown
 vim.api.nvim_create_autocmd("BufEnter", {
   callback = function()
