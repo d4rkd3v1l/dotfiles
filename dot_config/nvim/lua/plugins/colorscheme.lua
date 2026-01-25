@@ -7,6 +7,7 @@ return {
         overrides = {
           Special = { fg = dracula.colors().green },
           SpecialComment = { fg = dracula.colors().comment },
+          StatusLine = { fg = dracula.colors().white, bg = dracula.colors().black, },
 
           -- TreeSitter
           ['@markup.list'] = { fg = dracula.colors().fg, },
