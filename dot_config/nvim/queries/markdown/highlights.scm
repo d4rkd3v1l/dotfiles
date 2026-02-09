@@ -1,5 +1,5 @@
 ; extends
-;; checked checklist markers "- [x]"
+;; checked checklist markers "- [x] text"
 (
   list_item
     (list_marker_minus) @d4rk.markdown.task_checked_marker_minus
