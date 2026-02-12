@@ -30,6 +30,7 @@ return {
       "markdown_inline",
       "nginx",
       "objc",
+      "php",
       "powershell",
       "printf",
       "python",

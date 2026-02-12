@@ -1,0 +1,1 @@
+alias timew_ytd='timew month "$(date +%Y)-01" - tomorrow'
