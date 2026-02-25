@@ -16,4 +16,10 @@
 [
   (block_quote_marker)
   (block_continuation)
-] @d4Rk.markdown.block_quote_marker
+] @d4rk.markdown.block_quote_marker
+
+;; INFO callout
+(
+  (block_quote) @d4rk.callout.info.block
+  (#match? @d4rk.callout.info.block "^>\\s*\\[!INFO\\]")
+)

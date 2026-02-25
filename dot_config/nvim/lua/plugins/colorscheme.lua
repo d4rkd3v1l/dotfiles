@@ -56,7 +56,8 @@ return {
           ['@d4rk.markdown.task_checked_marker'] = { fg = dracula.colors().comment },
           ['@d4rk.markdown.task_checked_text'] = { fg = dracula.colors().comment },
           ['@d4rk.markdown.horizontal_rule'] = { fg = dracula.colors().comment },
-          ['@d4Rk.markdown.block_quote_marker'] = { fg = dracula.colors().green },
+          ['@d4rk.markdown.block_quote_marker'] = { fg = dracula.colors().green },
+          ['@d4rk.callout.info.block'] = { fg = dracula.colors().cyan },
         },
       })
     end,
