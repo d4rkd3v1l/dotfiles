@@ -24,3 +24,7 @@ brew "eza"
 brew "tlrc"
 brew "jq"
 cask "ghostty"
+
+# pdftotext (zsh pdf preview)
+brew pkg-config
+brew poppler
