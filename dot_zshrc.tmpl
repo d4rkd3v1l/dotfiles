@@ -68,6 +68,7 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 zstyle ':completion:*' menu no
 
 # Zsh Vi Mode (ZVM)
+export ZVM_INIT_MODE=safe # Fix compatibility with fzf widgets
 zinit ice depth=1
 zinit light jeffreytse/zsh-vi-mode
 ZVM_SYSTEM_CLIPBOARD_ENABLED=true
@@ -91,7 +92,7 @@ export ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]=none
 export ZSH_HIGHLIGHT_STYLES[precommand]="fg=green"
 
 # Keybindings
-bindkey '^r' history-incremental-search-backward
+bindkey '^r' fzf-history-widget
 
 # Aliases
 alias l='eza -lgaa'
@@ -101,8 +102,10 @@ alias timew_ytd='timew month "$(date +%Y)-01" - tomorrow'
 export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+export FZF_CTRL_R_OPTS="--reverse"
 
 # fzf-tab preview customization
+zstyle ':fzf-tab:*' fzf-flags --reverse
 zstyle ':fzf-tab:complete:export:*' fzf-preview "eval 'echo \$'$realpath"
 zstyle ':fzf-tab:complete:unset:*' fzf-preview "eval 'echo \$'$realpath"
 zstyle ':fzf-tab:*' fzf-preview '
