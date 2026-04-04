@@ -78,6 +78,7 @@ echo -e "${DefaultColor}--- [ Resolving requirements for Debian ] ---${ColorOff}
 
 function apt() {
   echo "⏳ Installing APT packages..."
+  sudo apt update
   sudo apt install -y \
     curl \
     wget \
