@@ -22,6 +22,10 @@ fi
 if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
   . "$HOME/.nix-profile/etc/profile.d/nix.sh"
 fi
+# SSH keychain
+if (( $+commands[keychain] )); then
+  eval "$(keychain --eval --quiet)"
+fi
 {{ end -}}
 
 # VI mode
