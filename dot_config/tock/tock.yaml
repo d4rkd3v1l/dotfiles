@@ -1,0 +1,23 @@
+backend: timewarrior
+timewarrior:
+  data_path: /Users/d4rk/.local/share/timewarrior/data
+theme:
+  name: custom
+  faint: '#44475A'
+  highlight: '#8BE9FD'
+  primary: '#BD93F9'
+  secondary: '#50FA7B'
+  sub_text: '#6272A4'
+  text: '#F8F8F2'
+  tag: '#FF79C6'
+time_format: "24"
+calendar:
+  time_start_format: "15:04"
+  time_end_format: " (Until 15:04)"
+  time_spent_format: "15h04m"
+  time_total_format: ""
+export:
+  ical:
+    file_name: "tock_export.ics"
+weekly_target: "32h"
+check_updates: true
