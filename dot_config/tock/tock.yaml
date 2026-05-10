@@ -1,6 +1,6 @@
 backend: timewarrior
 timewarrior:
-  data_path: /Users/d4rk/.local/share/timewarrior/data
+  data_path: ~/.local/share/timewarrior/data
 theme:
   name: custom
   faint: '#44475A'
@@ -14,8 +14,8 @@ time_format: "24"
 calendar:
   time_start_format: "15:04"
   time_end_format: " (Until 15:04)"
-  time_spent_format: "15h04m"
-  time_total_format: ""
+  time_spent_format: "decimal"
+  time_total_format: "decimal"
 export:
   ical:
     file_name: "tock_export.ics"
