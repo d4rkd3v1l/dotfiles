@@ -73,6 +73,11 @@ zstyle ':completion:*' menu no
 
 # Zsh Vi Mode (ZVM)
 export ZVM_INIT_MODE=safe # Fix compatibility with fzf widgets
+# fzf-history-widget must be bound after zvm init
+function zvm_after_init() {
+  bindkey -M viins '^R' fzf-history-widget
+  bindkey -M vicmd '^R' fzf-history-widget
+}
 zinit ice depth=1
 zinit light jeffreytse/zsh-vi-mode
 ZVM_SYSTEM_CLIPBOARD_ENABLED=true
@@ -94,9 +99,6 @@ export ZSH_HIGHLIGHT_STYLES[path_pathseparator]=none
 export ZSH_HIGHLIGHT_STYLES[path_prefix]=none
 export ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]=none
 export ZSH_HIGHLIGHT_STYLES[precommand]="fg=green"
-
-# Keybindings
-bindkey '^r' fzf-history-widget
 
 # Aliases
 alias l='eza -lgaa'

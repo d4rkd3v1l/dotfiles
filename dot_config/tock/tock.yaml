@@ -13,9 +13,9 @@ theme:
 time_format: "24"
 calendar:
   time_start_format: "15:04"
-  time_end_format: " (Until 15:04)"
-  time_spent_format: "decimal"
-  time_total_format: "decimal"
+  time_end_format: " • End 15:04"
+  time_spent_format: "decimal:2"
+  time_total_format: "decimal:2"
 export:
   ical:
     file_name: "tock_export.ics"
