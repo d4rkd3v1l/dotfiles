@@ -78,3 +78,26 @@ You can also manually run the requirements script, whenever you want.
 chezmoi cd
 chezmoi execute-template < run_once_after_install-requirements.sh.tmpl | bash
 ```
+
+## Update packages
+
+### macOS
+
+```bash
+# Brew
+brew update
+brew upgrade
+```
+
+### Debian
+
+```bash
+# Apt packages
+sudo apt update
+sudo apt upgrade
+
+# Nix packages
+nix-channel --update
+nix-env -u '*'
+nix-collect-garbage --delete-old
+```
