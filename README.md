@@ -2,7 +2,7 @@
 
 😈 d4Rkify your environment 😈
 
-⚠️ Fully support only for macOS and Debian ⚠️
+⚠️ Fully support only for macOS, Debian and Fedora ⚠️
 
 ## Features
 
@@ -17,12 +17,12 @@
 - lazygit
 - bat
 
-### macOS only
+### macOS only (WiP/discontinued)
 
 - Aerospace
 - Sketchybar
 
-### Linux only (WiP)
+### Linux only (WiP/discontinued)
 
 - Hyprland
 - Waybar
@@ -54,6 +54,12 @@ brew install borders
 ```bash
 wget https://github.com/twpayne/chezmoi/releases/download/v2.69.1/chezmoi_2.69.1_linux_amd64.deb
 sudo dpkg -i chezmoi_2.69.1_linux_amd64.deb
+```
+
+### Fedora
+
+```bash
+sudo dnf install chezmoi
 ```
 
 ## Init
@@ -100,4 +106,11 @@ sudo apt upgrade
 nix-channel --update
 nix-env -u '*'
 nix-collect-garbage --delete-old
+```
+
+### Fedora
+
+```bash
+# dnf packages
+sudo dnf upgrade
 ```

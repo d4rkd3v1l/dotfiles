@@ -33,7 +33,14 @@ function execute() {
   fi
 }
 
-{{ if eq .chezmoi.os "darwin" -}}
+{{- $id := .chezmoi.osRelease.id | default "" -}}
+{{- $idLike := get .chezmoi.osRelease "idLike" | default "" -}}
+{{- $isMacOS := eq .chezmoi.os "darwin" -}}
+{{- $isLinux := eq .chezmoi.os "linux" -}}
+{{- $isDebian := or (eq $id "debian") (contains "debian" $idLike) -}}
+{{- $isFedora := or (eq $id "fedora") (contains "fedora" $idLike) -}}
+
+{{ if $isMacOS }}
 
 echo -e "${DefaultColor}--- [ Resolving requirements for macOS ] ---${ColorOff}"
 
@@ -71,8 +78,21 @@ function finderAndDock() {
 execute installBrew "brew" "❓ Install brew packages? (Y/n) " "⚠️ Skipped brew packages installation."
 execute finderAndDock "Finder & Dock" "❓ Configure Finder & Dock? (Y/n) " "⚠️ Skipped Finder and Dock configuration."
 
-{{- else if eq .chezmoi.os "linux" -}}
-{{- if (or (eq .chezmoi.osRelease.id "debian") (eq .chezmoi.osRelease.idLike "debian")) -}}
+{{ else if $isLinux }}
+
+function zsh() {
+  echo "⏳ Ensuring zsh is login shell..."
+  if [[ $(getent passwd $LOGNAME | cut -d: -f7) != $(which zsh) ]]; then
+    echo "Changing login shell to zsh..."
+    sudo chsh -s $(which zsh) $LOGNAME
+  else
+    echo "Login shell is already zsh."
+  fi
+  echo "✅ Zsh as login shell ensured successfully."
+}
+
+
+{{ if $isDebian }}
 
 echo -e "${DefaultColor}--- [ Resolving requirements for Debian ] ---${ColorOff}"
 
@@ -96,7 +116,7 @@ function apt() {
     python3-dev
 
   sudo npm install markdownlint-cli2 --global
-  }
+}
 
 function nix() { # Use https://github.com/dariogriffo/debian.griffo.io and debian-experimental (nvim) instead?
   # Nix package manager (for bleeding edge stuff like neovim)
@@ -123,17 +143,6 @@ function nix() { # Use https://github.com/dariogriffo/debian.griffo.io and debia
   echo "✅ Nix packages installed successfully."
 }
 
-function zsh() {
-  echo "⏳ Ensuring zsh is login shell..."
-  if [[ $(getent passwd $LOGNAME | cut -d: -f7) != "/bin/zsh" ]]; then
-    echo "Changing login shell to zsh..."
-    sudo chsh -s /bin/zsh $LOGNAME
-  else
-    echo "Login shell is already zsh."
-  fi
-  echo "✅ Zsh as login shell ensured successfully."
-}
-
 function ghostty() {
   # Ghostty
   echo "⏳ Intalling Ghostty..."
@@ -154,14 +163,48 @@ execute nix "Nix" "❓ Install Nix packages? (Y/n) " "⚠️ Skipped Nix package
 execute zsh "Zsh" "❓ Set Zsh as login shell? (Y/n) " "⚠️ Skipped ensuring Zsh as login shell."
 execute ghostty "Ghostty" "❓ Install Ghostty? (Y/n) " "⚠️ Skipped Ghostty installation."
 
-{{- end }}
-{{- else -}}
+{{ else if $isFedora }}
+
+echo -e "${DefaultColor}--- [ Resolving requirements for Fedora ] ---${ColorOff}"
+
+function dnf() {
+  echo "⏳ Installing DNF packages..."
+
+  sudo dnf copr enable dejan/lazygit -y
+  sudo dnf copr enable scottames/ghostty -y
+  sudo dnf install -y \
+    curl \
+    wget \
+    git \
+    zsh \
+    tmux \
+    jq \
+    python3-pip \
+    nodejs \
+    npm \
+    neovim \
+    fzf \
+    fd-find \
+    lazygit \
+    git-delta \
+    eza \
+    tldr \
+    ghostty
+
+  sudo npm install markdownlint-cli2 --global
+}
+
+execute dnf "DNF" "❓ Install DNF packages? (Y/n) " "⚠️ Skipped DNF packages installation."
+execute zsh "Zsh" "❓ Set Zsh as login shell? (Y/n) " "⚠️ Skipped ensuring Zsh as login shell."
+
+{{ end }}
+{{ else }}
 echo
 echo -e "${DefaultColor}--- [ Resolving requirements ] ---${ColorOff}"
 echo
 echo "‼️ Unsupported operating system."
 exit 1
-{{- end }}
+{{ end }}
 
 # --- [ General ] ---------------------------------
 

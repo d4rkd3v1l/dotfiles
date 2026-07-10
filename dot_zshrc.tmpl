@@ -12,12 +12,19 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 export EDITOR="nvim"
 
-{{ if eq .chezmoi.os "darwin" -}}
+{{- $id := .chezmoi.osRelease.id | default "" -}}
+{{- $idLike := get .chezmoi.osRelease "idLike" | default "" -}}
+{{- $isMacOS := eq .chezmoi.os "darwin" -}}
+{{- $isLinux := eq .chezmoi.os "linux" -}}
+{{- $isDebian := or (eq $id "debian") (contains "debian" $idLike) -}}
+{{- $isFedora := or (eq $id "fedora") (contains "fedora" $idLike) -}}
+
+{{ if $isMacOS -}}
 # Homebrew
 if [ -e "/opt/homebrew/bin/brew" ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
-{{ else if (or (eq .chezmoi.osRelease.id "debian") (eq .chezmoi.osRelease.idLike "debian")) }}
+{{ else if $isDebian }}
 # Nix
 if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
   . "$HOME/.nix-profile/etc/profile.d/nix.sh"
