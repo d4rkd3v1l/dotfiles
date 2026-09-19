@@ -6,11 +6,10 @@
   email = {{ $email | quote }}
 
 [diff]
-  command = "delta"
   pager = "delta"
 
 [merge]
   command = "nvim"
-  args = ["-d", "{{ "{{ .Destination }}" }}, {{ "{{ .Source }}" }}, {{ "{{ .Target }}" }}"]
+  args = ["-d", {{ printf "%q" "{{ .Destination }}" }}, {{ printf "%q" "{{ .Source }}" }}, {{ printf "%q" "{{ .Target }}" }}]
 
 # vi: ft=toml

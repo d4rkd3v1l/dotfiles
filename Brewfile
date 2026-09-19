@@ -10,7 +10,6 @@ brew "node"
 brew "fzf"
 brew "rg"
 brew "fd"
-brew "node"
 brew "markdownlint-cli2"
 
 # lazygit
@@ -26,5 +25,5 @@ brew "jq"
 cask "ghostty"
 
 # pdftotext (zsh pdf preview)
-brew pkg-config
-brew poppler
+brew "pkg-config"
+brew "poppler"
