@@ -2,10 +2,9 @@
 
 😈 d4Rkify your environment 😈
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![Screenshot](images/dotfiles.png)
 
-Managed with [chezmoi](https://www.chezmoi.io/).
-One command to (re)build your setup on macOS, Debian or Fedora - bathed in [Dracula](https://draculatheme.com/).
+Managed with [chezmoi](https://www.chezmoi.io/). One command to (re)build your setup on macOS, Debian or Fedora - bathed in [Dracula](https://draculatheme.com/).
 
 ## What's inside
 
@@ -42,9 +41,10 @@ chezmoi init https://github.com/d4rkd3v1l/dotfiles.git
 chezmoi apply
 ```
 
-You'll be prompted for your **name** and **email** (stored locally), and answers 
-to the one-time setup: OS packages, zsh as login shell, MesloLGS fonts, tmux plugins. 
-May be skipped using `DOTFILES_FRONTEND=noninteractive` e.g. for automation.
+You'll be prompted for your **name** and **email** (used for git config). 
+Furthermore you'll be asked which steps to perform (install packages etc.)
+These questions may automatically be affirmed using `DOTFILES_FRONTEND=noninteractive`, 
+e.g. for automation.
 
 ## Updating
 
@@ -65,4 +65,4 @@ sudo dnf upgrade
 
 ## License
 
-MIT © d4Rk — see [LICENSE](LICENSE).
+MIT © d4Rk - see [LICENSE](LICENSE).
