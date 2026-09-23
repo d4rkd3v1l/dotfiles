@@ -33,7 +33,7 @@ function execute() {
   fi
 }
 
-{{- $id := .chezmoi.osRelease.id | default "" -}}
+{{- $id := get .chezmoi.osRelease "id" | default "" -}}
 {{- $idLike := get .chezmoi.osRelease "idLike" | default "" -}}
 {{- $isMacOS := eq .chezmoi.os "darwin" -}}
 {{- $isLinux := eq .chezmoi.os "linux" -}}
