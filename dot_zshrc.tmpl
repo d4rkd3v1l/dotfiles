@@ -19,7 +19,7 @@ export EDITOR="nvim"
 {{- $isDebian := or (eq $id "debian") (contains "debian" $idLike) -}}
 {{- $isFedora := or (eq $id "fedora") (contains "fedora" $idLike) -}}
 
-{{ if $isMacOS -}}
+{{ if $isMacOS }}
 # Homebrew
 if [ -e "/opt/homebrew/bin/brew" ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
