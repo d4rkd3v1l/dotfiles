@@ -125,7 +125,7 @@ zstyle ':fzf-tab:*' fzf-preview '
   [[ -z "$file" || ! -e "$file" ]] && { echo "No preview available."; return; }
 
   if [[ -d "$file" ]]; then
-    eza --tree --level=1 --color=always --icons "$file" | head -200
+    eza --tree --level=1 --color=always "$file" | head -200
     return
   fi
 
