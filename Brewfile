@@ -23,6 +23,7 @@ brew "eza"
 brew "tlrc"
 brew "jq"
 cask "ghostty"
+cask "linearmouse"
 
 # pdftotext (zsh pdf preview)
 brew "pkg-config"

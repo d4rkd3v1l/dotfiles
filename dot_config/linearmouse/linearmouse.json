@@ -1,0 +1,15 @@
+{
+  "$schema" : "https:\/\/schema.linearmouse.app\/0.12.0",
+  "schemes" : [
+    {
+      "if" : {
+        "device" : {
+          "category" : "mouse"
+        }
+      },
+      "scrolling" : {
+        "reverse" : true
+      }
+    }
+  ]
+}
